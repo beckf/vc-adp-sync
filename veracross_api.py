@@ -31,7 +31,7 @@ def parse_fs(fsdata):
     """
     Revuild VC data for faculty staff to identify only what we want.
     For now, lets cast all as a string.  We can recast when interfaced with api.
-    Use person_pk/employee_number as index to keep array sorted.
+    Use person_pk/employee_number as index to keep array sorted
     :param fsdata:
     :return:
     """
