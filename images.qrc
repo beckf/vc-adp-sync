@@ -1,0 +1,9 @@
+<RCC>
+    <qresource>
+        <file>images/adp-vc-logo.png</file>
+        <file>images/adp-vc-logo-100.png</file>
+        <file>images/green_status.png</file>
+        <file>images/orange_status.png</file>
+        <file>images/red_status.png</file>
+    </qresource>
+</RCC>
