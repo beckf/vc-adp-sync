@@ -15,7 +15,7 @@ class Main(QtWidgets.QMainWindow):
 
         # Set Images
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
-        self.ui.vcDataStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
+        self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
         self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
         #Gather Config
@@ -33,14 +33,14 @@ class Main(QtWidgets.QMainWindow):
 
     def get_vc_data(self):
         """
-        Get VC Faculty Staff
+        Get VC Data
         :return:
         """
         try:
-            self.vcdata = v.fs(self.c["vcurl"], self.c["vcuser"], self.c["vcpass"])
-            if len(self.vcdata) > 0:
-                self.ui.vcRecordCount.setText(str(len(self.vcdata)) + " Records")
-                self.ui.vcDataStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+            self.vcfsdata = v.fs(self.c, "facstaff")
+            if len(self.vcfsdata) > 0:
+                self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
+                self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
         except:
             print("cannot get fsdata")
 
@@ -49,12 +49,28 @@ class Main(QtWidgets.QMainWindow):
         Parse Action
         :return:
         """
-        try:
-            self.vc_parsed_data = v.parse_fs(self.vcdata)
-            if len(self.vc_parsed_data) > 0:
-                self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-        except:
-            print("no vcdata")
+        d = []
+        for i in self.vcfsdata:
+
+            if i["household_fk"] > 0:
+                hh = v.fs(self.c, "households/" + str(i["household_fk"]))
+            else:
+                hh = None
+
+            a = {
+                "employee_number": str(i["person_pk"]),
+                "last_name": str(i["last_name"]),
+                "first_name": str(i["first_name"])
+            }
+
+            if hh:
+                a.update({"address_1": str(hh["household"]["address_1"])})
+
+            d.insert(int(i["person_pk"]), a)
+
+        if len(d) > 0:
+            print(d)
+            self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
 
     def save_settings_button(self):
         """
