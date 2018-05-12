@@ -14,7 +14,7 @@
    <string>Veracross to ADP Sync</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="debugTab">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -223,6 +223,34 @@
       </property>
       <property name="text">
        <string>Save</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Debug</string>
+     </attribute>
+     <widget class="QLabel" name="lbl_vcLastXRateLimitReading">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Veracross Last X-Rate-Limit-Remaining Reading</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditXRateLimitReading">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>10</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
       </property>
      </widget>
     </widget>
