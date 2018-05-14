@@ -253,6 +253,29 @@
        </rect>
       </property>
      </widget>
+     <widget class="QLineEdit" name="lineEditXRateLimitResetReading">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>40</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_vcLastXRateResetReading">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Veracross Last X-Rate-Limit-Reset Reading</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

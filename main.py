@@ -48,6 +48,7 @@ class Main(QtWidgets.QMainWindow):
                 self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
                 self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
                 self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
+                self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
         except:
             print("cannot get fsdata")
 
@@ -72,12 +73,13 @@ class Main(QtWidgets.QMainWindow):
 
             if hh:
                 a.update({"address_1": str(hh["household"]["address_1"])})
+                a.update({"address_2": str(hh["household"]["address_2"])})
 
             d.insert(int(i["person_pk"]), a)
 
         if len(d) > 0:
-            print(d)
             self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
+            self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
 
     def save_settings_button(self):
