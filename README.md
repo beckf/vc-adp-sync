@@ -1,3 +1,5 @@
+![Alt text](screenshots/adp-vc-logo.png?raw=true "Logo")
+
 ## ADP VCSync
 This is the beginning of Veracross to ADP Sync using PyQT.
 
