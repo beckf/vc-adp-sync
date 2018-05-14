@@ -14,7 +14,7 @@
    <string>Veracross to ADP Sync</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="debugTab">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -56,7 +56,7 @@
        <string/>
       </property>
      </widget>
-     <widget class="QLabel" name="vcDataStatusLabel">
+     <widget class="QLabel" name="vcDataFSStatusLabel">
       <property name="geometry">
        <rect>
         <x>180</x>
@@ -69,24 +69,24 @@
        <string/>
       </property>
      </widget>
-     <widget class="QLabel" name="vcRecordCount">
+     <widget class="QLabel" name="vcFSRecordCount">
       <property name="geometry">
        <rect>
-        <x>220</x>
+        <x>210</x>
         <y>20</y>
-        <width>101</width>
+        <width>171</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>0 Records</string>
+       <string>0 Faculty Staff Records</string>
       </property>
      </widget>
      <widget class="QPushButton" name="parseVCDataButton">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>70</y>
         <width>161</width>
         <height>41</height>
        </rect>
@@ -99,7 +99,7 @@
       <property name="geometry">
        <rect>
         <x>180</x>
-        <y>70</y>
+        <y>80</y>
         <width>20</width>
         <height>20</height>
        </rect>
@@ -108,6 +108,12 @@
        <string/>
       </property>
      </widget>
+     <zorder>getVCDataButton</zorder>
+     <zorder>logo_label</zorder>
+     <zorder>vcDataFSStatusLabel</zorder>
+     <zorder>parseVCDataButton</zorder>
+     <zorder>vcParseStatusLabel</zorder>
+     <zorder>vcFSRecordCount</zorder>
     </widget>
     <widget class="QWidget" name="resultsTab">
      <attribute name="title">
@@ -141,7 +147,7 @@
        <enum>QLineEdit::PasswordEchoOnEdit</enum>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_vcapiusername">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -170,7 +176,7 @@
        <enum>QLineEdit::PasswordEchoOnEdit</enum>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="label_vcpassword">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -193,7 +199,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="label_vcapiurl">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -217,6 +223,57 @@
       </property>
       <property name="text">
        <string>Save</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Debug</string>
+     </attribute>
+     <widget class="QLabel" name="lbl_vcLastXRateLimitReading">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Veracross Last X-Rate-Limit-Remaining Reading</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditXRateLimitReading">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>10</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEditXRateLimitResetReading">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>40</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_vcLastXRateResetReading">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Veracross Last X-Rate-Limit-Reset Reading</string>
       </property>
      </widget>
     </widget>

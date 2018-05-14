@@ -13,13 +13,19 @@ class Main(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Set Vars
+        self.vcfsdata = []
+
         # Set Images
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
-        self.ui.vcDataStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
+        self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
         self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
-        #Gather Config
+        # Gather Config
         self.c = config.load_settings()
+
+        # Create VC Instance
+        self.vc = v.Veracross()
 
         # Set Labels
         self.ui.vc_api_user.setText(self.c["vcuser"])
@@ -33,14 +39,16 @@ class Main(QtWidgets.QMainWindow):
 
     def get_vc_data(self):
         """
-        Get VC Faculty Staff
+        Get VC Data
         :return:
         """
         try:
-            self.vcdata = v.fs(self.c["vcurl"], self.c["vcuser"], self.c["vcpass"])
-            if len(self.vcdata) > 0:
-                self.ui.vcRecordCount.setText(str(len(self.vcdata)) + " Records")
-                self.ui.vcDataStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+            self.vcfsdata = self.vc.pull(self.c, "facstaff")
+            if len(self.vcfsdata) > 0:
+                self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
+                self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+                self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
+                self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
         except:
             print("cannot get fsdata")
 
@@ -49,12 +57,30 @@ class Main(QtWidgets.QMainWindow):
         Parse Action
         :return:
         """
-        try:
-            self.vc_parsed_data = v.parse_fs(self.vcdata)
-            if len(self.vc_parsed_data) > 0:
-                self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-        except:
-            print("no vcdata")
+        d = []
+        for i in self.vcfsdata:
+
+            if i["household_fk"] > 0:
+                hh = self.vc.pull(self.c, "households/" + str(i["household_fk"]))
+            else:
+                hh = None
+
+            a = {
+                "employee_number": str(i["person_pk"]),
+                "last_name": str(i["last_name"]),
+                "first_name": str(i["first_name"])
+            }
+
+            if hh:
+                a.update({"address_1": str(hh["household"]["address_1"])})
+                a.update({"address_2": str(hh["household"]["address_2"])})
+
+            d.insert(int(i["person_pk"]), a)
+
+        if len(d) > 0:
+            self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
+            self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
+            self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
 
     def save_settings_button(self):
         """
@@ -70,7 +96,6 @@ class Main(QtWidgets.QMainWindow):
         config.save_settings(settings)
         # Reload Settings
         self.c = config.load_settings()
-
 
 
 if __name__ == '__main__':
