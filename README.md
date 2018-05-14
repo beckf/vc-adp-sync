@@ -8,5 +8,10 @@ PyQT was selected for it's portability between MacOS and Windows.
 2) Clone the project using Git or download zip.
 3) While in the repo directory from GitHub, type: pip install -r requirements
 4) Switch to the development branch for the latest and greatest.
-5) To run type python main.py
+5) To run, type: python main.py
 
+
+![Alt text](screenshots/sync.png?raw=true "Sync Tab")
+
+
+![Alt text](screenshots/settings.png?raw=true "Settings Tab")
