@@ -11,10 +11,10 @@ PyQT was selected for it's portability between MacOS and Windows.
 3) While in the repo directory from GitHub, type: pip install -r requirements
 4) Switch to the development branch for the latest and greatest.
 5) To run, type: python main.py
-6) Enter settings on Settings Tab:
-    a) VC API Username
-    b) VC API Password
-    c) VC API URL (example: https://api.veracross.com/XX/v2)
+6) Enter settings on Settings Tab:\
+    a) VC API Username\
+    b) VC API Password\
+    c) VC API URL (example: https://api.veracross.com/XX/v2)\
 
 
 ![Alt text](screenshots/sync.png?raw=true "Sync Tab")
