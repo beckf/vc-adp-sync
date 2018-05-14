@@ -1,4 +1,4 @@
-import sys,os,socket,pickle
+import sys
 from PyQt5 import QtWidgets, QtGui, QtCore
 from mainwindow import Ui_MainWindow
 import images

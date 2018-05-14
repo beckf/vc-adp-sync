@@ -10,7 +10,7 @@ class Veracross():
     def pull(self, c, source):
         """
         Get Veracross Data with pagination
-        :param c: config dictionary
+        :param c: config dictionary (see config.py)
         :param source: VC Source (households, facstaff, facstaff/99)
         :return: records in a list of dictionaries
         """

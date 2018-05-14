@@ -4,7 +4,7 @@ import pickle
 
 if sys.platform == "darwin":
     # OS X
-    config_file = os.environ['HOME'] + '/Library/Preferences/vcadpsync.p'
+    config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync.pickle'
     if not os.path.isfile(config_file):
         default = {
             "vcuser": str(" "),
