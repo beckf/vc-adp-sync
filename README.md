@@ -14,7 +14,7 @@ PyQT was selected for it's portability between MacOS and Windows.
 6) Enter settings on Settings Tab:\
     a) VC API Username\
     b) VC API Password\
-    c) VC API URL (example: https://api.veracross.com/XX/v2)\
+    c) VC API URL (example: https://api.veracross.com/XX/v2)
 
 
 ![Alt text](screenshots/sync.png?raw=true "Sync Tab")
