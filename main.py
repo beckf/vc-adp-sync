@@ -13,13 +13,19 @@ class Main(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Set Vars
+        self.vcfsdata = []
+
         # Set Images
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
         self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
         self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
-        #Gather Config
+        # Gather Config
         self.c = config.load_settings()
+
+        # Create VC Instance
+        self.vc = v.Veracross()
 
         # Set Labels
         self.ui.vc_api_user.setText(self.c["vcuser"])
@@ -37,10 +43,11 @@ class Main(QtWidgets.QMainWindow):
         :return:
         """
         try:
-            self.vcfsdata = v.fs(self.c, "facstaff")
+            self.vcfsdata = self.vc.pull(self.c, "facstaff")
             if len(self.vcfsdata) > 0:
                 self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
                 self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+                self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
         except:
             print("cannot get fsdata")
 
@@ -53,7 +60,7 @@ class Main(QtWidgets.QMainWindow):
         for i in self.vcfsdata:
 
             if i["household_fk"] > 0:
-                hh = v.fs(self.c, "households/" + str(i["household_fk"]))
+                hh = self.vc.pull(self.c, "households/" + str(i["household_fk"]))
             else:
                 hh = None
 
@@ -70,6 +77,7 @@ class Main(QtWidgets.QMainWindow):
 
         if len(d) > 0:
             print(d)
+            self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
 
     def save_settings_button(self):
