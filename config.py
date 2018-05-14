@@ -4,7 +4,7 @@ import pickle
 
 if sys.platform == "darwin":
     # OS X
-    config_file = os.environ['HOME'] + '/Library/Preferences/vcadpsync.p'
+    config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync.pickle'
     if not os.path.isfile(config_file):
         default = {
             "vcuser": str(" "),
@@ -15,9 +15,19 @@ if sys.platform == "darwin":
 
 elif sys.platform == "win32":
     # Windows
-    config_file = 'someplace'
-    if not os.path.isfile(config_file):
-        open(config_file, 'w').close()
+    config_path = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
+    config_file = 'vc-adp-sync.pickle'
+
+    if not os.path.isdir(config_path):
+        os.makedirs(config_path)
+
+    if not os.path.isfile(config_path + "/" + config_file):
+        default = {
+            "vcuser": str(" "),
+            "vcpass": str(" "),
+            "vcurl": str(" ")
+        }
+        pickle.dump(default, open(config_file, "wb"))
 
 
 def save_settings(settings):
