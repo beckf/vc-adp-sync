@@ -40,6 +40,7 @@ class Veracross():
                                            c["vcpass"]))
                     self.rate_limit_remaining = r.headers['X-Rate-Limit-Remaining']
                     self.rate_limit_reset = r.headers['X-Rate-Limit-Reset']
+
                     records += r.json()
                     page += 1
                 return records
