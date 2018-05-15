@@ -14,7 +14,7 @@
    <string>Veracross to ADP Sync</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="debugTab">
+   <widget class="QTabWidget" name="tabs">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -30,19 +30,6 @@
      <attribute name="title">
       <string>Sync</string>
      </attribute>
-     <widget class="QPushButton" name="getVCDataButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>161</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Get Veracross Data</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="logo_label">
       <property name="geometry">
        <rect>
@@ -56,64 +43,87 @@
        <string/>
       </property>
      </widget>
-     <widget class="QLabel" name="vcDataFSStatusLabel">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>20</y>
-        <width>20</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="vcFSRecordCount">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>20</y>
-        <width>171</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0 Faculty Staff Records</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="parseVCDataButton">
+     <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>70</y>
-        <width>161</width>
-        <height>41</height>
+        <y>10</y>
+        <width>371</width>
+        <height>81</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Parse Veracross Data</string>
-      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2">
+        <widget class="QLabel" name="vcFSRecordCount">
+         <property name="text">
+          <string>0 Faculty Staff Records</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="vcParseStatusLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="parseVCDataButton">
+         <property name="text">
+          <string>Parse Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="getVCDataButton">
+         <property name="text">
+          <string>Get Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="vcDataFSStatusLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QLabel" name="vcParseStatusLabel">
+    </widget>
+    <widget class="QWidget" name="fieldMapTab">
+     <attribute name="title">
+      <string>Map Fields</string>
+     </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>80</y>
-        <width>20</width>
-        <height>20</height>
+        <x>10</x>
+        <y>10</y>
+        <width>731</width>
+        <height>431</height>
        </rect>
       </property>
-      <property name="text">
-       <string/>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="btn_saveFieldMap">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="txt_fieldMap">
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="acceptRichText">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <zorder>getVCDataButton</zorder>
-     <zorder>logo_label</zorder>
-     <zorder>vcDataFSStatusLabel</zorder>
-     <zorder>parseVCDataButton</zorder>
-     <zorder>vcParseStatusLabel</zorder>
-     <zorder>vcFSRecordCount</zorder>
     </widget>
     <widget class="QWidget" name="resultsTab">
      <attribute name="title">
@@ -160,84 +170,6 @@
      <attribute name="title">
       <string>Settings</string>
      </attribute>
-     <widget class="QLineEdit" name="vc_api_user">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>30</y>
-        <width>291</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="echoMode">
-       <enum>QLineEdit::PasswordEchoOnEdit</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_vcapiusername">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>30</y>
-        <width>191</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Veracross API Username</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="vc_api_pass">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>70</y>
-        <width>291</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="echoMode">
-       <enum>QLineEdit::PasswordEchoOnEdit</enum>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_vcpassword">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>70</y>
-        <width>191</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Veracross API Password</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="vc_api_url">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>110</y>
-        <width>291</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_vcapiurl">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>110</y>
-        <width>191</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Veracross API Base URL</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="settingsSave">
       <property name="geometry">
        <rect>
@@ -251,57 +183,64 @@
        <string>Save</string>
       </property>
      </widget>
+     <widget class="QWidget" name="gridLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>531</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_vcpassword">
+         <property name="text">
+          <string>Veracross API Password</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_vcapiusername">
+         <property name="text">
+          <string>Veracross API Username</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="vc_api_user">
+         <property name="echoMode">
+          <enum>QLineEdit::PasswordEchoOnEdit</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="vc_api_pass">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::PasswordEchoOnEdit</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_vcapiurl">
+         <property name="text">
+          <string>Veracross API Base URL</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="vc_api_url"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="debugTab">
      <attribute name="title">
       <string>Debug</string>
      </attribute>
-     <widget class="QLabel" name="lbl_vcLastXRateLimitReading">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>301</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Veracross Last X-Rate-Limit-Remaining Reading</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEditXRateLimitReading">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>10</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEditXRateLimitResetReading">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>40</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="lbl_vcLastXRateResetReading">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>301</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Veracross Last X-Rate-Limit-Reset Reading</string>
-      </property>
-     </widget>
      <widget class="QTextBrowser" name="textLog">
       <property name="geometry">
        <rect>
@@ -324,6 +263,38 @@
       <property name="text">
        <string>Log</string>
       </property>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>471</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="lbl_vcLastXRateLimitReading">
+         <property name="text">
+          <string>Veracross Last X-Rate-Limit-Remaining Reading</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditXRateLimitReading"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lbl_vcLastXRateResetReading">
+         <property name="text">
+          <string>Veracross Last X-Rate-Limit-Reset Reading</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditXRateLimitResetReading"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </widget>
