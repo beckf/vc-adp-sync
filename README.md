@@ -21,3 +21,6 @@ PyQT was selected for it's portability between MacOS and Windows.
 
 
 ![Alt text](screenshots/settings.png?raw=true "Settings Tab")
+
+
+![Alt text](screenshots/debug.png?raw=true "Debug Tab")

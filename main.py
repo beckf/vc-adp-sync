@@ -19,8 +19,8 @@ class Main(QtWidgets.QMainWindow):
         self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
         # Gather Config
-        self.c = config.load_settings()
-        self.field_maps = config.load_field_maps()
+        self.c = config.load_settings("config")
+        self.field_maps = config.load_settings("fields")
 
         # Set Labels
         self.ui.vc_api_user.setText(self.c["vcuser"])
@@ -107,9 +107,9 @@ class Main(QtWidgets.QMainWindow):
             "vcurl": self.ui.vc_api_url.text()
         }
         # Save settings
-        config.save_settings(settings)
+        config.save_settings(settings, "config")
         # Reload Settings
-        self.c = config.load_settings()
+        self.c = config.load_settings("config")
 
     def save_field_map(self):
         """
@@ -117,9 +117,9 @@ class Main(QtWidgets.QMainWindow):
         :return:
         """
         # Save settings
-        config.save_field_maps(self.ui.txt_fieldMap.toPlainText())
+        config.save_settings(self.ui.txt_fieldMap.toPlainText(), "fields")
         # Reload Settings
-        self.field_maps = config.load_field_maps()
+        self.field_maps = config.load_settings("fields")
 
     def debug_append_log(self, text):
         """

@@ -36,53 +36,25 @@ elif sys.platform == "win32":
         d.close()
 
 
-def save_settings(settings):
+def save_settings(settings, key):
     """
     Saves settings to the pickle file
-    :param settings: dictionary of settings. vcuser, vcpass, vcurl
+    :param settings:  data to save.
+    :param key: shelve key to save the data to
     :return: nothing
     """
     d = shelve.open(config_file, flag='c', writeback=True)
-    d["config"] = settings
+    d[key] = settings
     d.sync()
     d.close()
 
 
-def load_settings():
+def load_settings(key):
     """
     Get settings from pickle file
-    :return: dictionary of settigns
+    :return: data from file
     """
     d = shelve.open(config_file, flag='c', writeback=True)
-    s = d["config"]
+    s = d[key]
     d.close()
     return s
-
-
-def save_field_maps(maps):
-    """
-    Saves field maps to config file
-    :param maps:
-    :return: nothing
-    """
-    try:
-        d = shelve.open(config_file, flag='c', writeback=True)
-        d["fields"] = maps
-        d.sync()
-        d.close()
-    except:
-        return None
-
-
-def load_field_maps():
-    """
-    Returns field maps from config file
-    :return:
-    """
-    try:
-        d = shelve.open(config_file, flag='c', writeback=True)
-        s = d["fields"]
-        d.close()
-        return s
-    except:
-        return None
