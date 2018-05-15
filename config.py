@@ -1,48 +1,60 @@
 import sys
 import os
-import pickle
+import shelve
 
 if sys.platform == "darwin":
     # OS X
-    config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync.pickle'
-    if not os.path.isfile(config_file):
+    config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync'
+    if not os.path.isfile(config_file + ".db"):
         default = {
             "vcuser": str(" "),
             "vcpass": str(" "),
             "vcurl": str(" ")
         }
-        pickle.dump(default, open(config_file, "wb"))
+        d = shelve.open(config_file, flag='c', writeback=True)
+        d["config"] = default
+        d.sync()
+        d.close()
 
 elif sys.platform == "win32":
     # Windows
     config_path = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
-    config_file = 'vc-adp-sync.pickle'
+    config_file = config_path + "/vc-adp-sync"
 
     if not os.path.isdir(config_path):
         os.makedirs(config_path)
 
-    if not os.path.isfile(config_path + "/" + config_file):
+    if not os.path.isfile(config_file + ".db"):
         default = {
             "vcuser": str(" "),
             "vcpass": str(" "),
             "vcurl": str(" ")
         }
-        pickle.dump(default, open(config_file, "wb"))
+        d = shelve.open(config_file, flag='c', writeback=True)
+        d["config"] = default
+        d.sync()
+        d.close()
 
 
-def save_settings(settings):
+def save_settings(settings, key):
     """
     Saves settings to the pickle file
-    :param settings: dictionary of settings. vcuser, vcpass, vcurl
+    :param settings:  data to save.
+    :param key: shelve key to save the data to
     :return: nothing
     """
-    pickle.dump(settings, open(config_file, "wb"))
+    d = shelve.open(config_file, flag='c', writeback=True)
+    d[key] = settings
+    d.sync()
+    d.close()
 
 
-def load_settings():
+def load_settings(key):
     """
     Get settings from pickle file
-    :return: dictionary of settigns
+    :return: data from file
     """
-    s = pickle.load(open(config_file, "rb"))
+    d = shelve.open(config_file, flag='c', writeback=True)
+    s = d[key]
+    d.close()
     return s
