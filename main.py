@@ -49,8 +49,9 @@ class Main(QtWidgets.QMainWindow):
                 self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
                 self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
                 self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
+                self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records.")
         except:
-            print("cannot get fsdata")
+            self.debug_append_log("Cannot get faculty staff from VC")
 
     def parse_vc_data(self):
         """
@@ -68,19 +69,30 @@ class Main(QtWidgets.QMainWindow):
             a = {
                 "employee_number": str(i["person_pk"]),
                 "last_name": str(i["last_name"]),
-                "first_name": str(i["first_name"])
+                "first_name": str(i["first_name"]),
+                "nick_name": str(i["nick_first_name"]),
+                "middle_name": str(i["middle_name"]),
+                "mobile_phone": str(i["mobile_phone"]),
+                "home_phone": str(i["home_phone"]),
+                "work_phone": str(i["business_phone"]),
+                "email_1": str(i["email_1"])
             }
 
             if hh:
                 a.update({"address_1": str(hh["household"]["address_1"])})
                 a.update({"address_2": str(hh["household"]["address_2"])})
+                a.update({"city": str(hh["household"]["city"])})
+                a.update({"state_province": str(hh["household"]["state_province"])})
+                a.update({"postal_code": str(hh["household"]["postal_code"])})
 
             d.insert(int(i["person_pk"]), a)
 
         if len(d) > 0:
             self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
             self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
+            self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+            self.ui.resultsTextEdit.setText(str(d))
 
     def save_settings_button(self):
         """
@@ -96,6 +108,16 @@ class Main(QtWidgets.QMainWindow):
         config.save_settings(settings)
         # Reload Settings
         self.c = config.load_settings()
+
+    def debug_append_log(self, text):
+        """
+        Write to log window
+        :param text:
+        :return:
+        """
+        self.ui.textLog.moveCursor(QtGui.QTextCursor.End)
+        self.ui.textLog.ensureCursorVisible()
+        self.ui.textLog.insertPlainText(text)
 
 
 if __name__ == '__main__':

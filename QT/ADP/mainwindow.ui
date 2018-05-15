@@ -123,10 +123,36 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
+        <y>70</y>
         <width>721</width>
-        <height>431</height>
+        <height>371</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_ResultsPrevious">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Previous</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_ResultsNext">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>20</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next</string>
       </property>
      </widget>
     </widget>
@@ -274,6 +300,29 @@
       </property>
       <property name="text">
        <string>Veracross Last X-Rate-Limit-Reset Reading</string>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="textLog">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>731</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbl_Log">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>210</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Log</string>
       </property>
      </widget>
     </widget>
