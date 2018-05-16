@@ -71,19 +71,22 @@ class Main(QtWidgets.QMainWindow):
             else:
                 hh = None
 
-            # Get field maps from the textbrowser.
-            field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
+            # Get field maps from the field maps textbrowser.
+            try:
+                field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
+            except:
+                self.warn_user("Invalid Field Maps! Check that field maps are in JSON format.")
+                break
 
             a = {}
             for f in i:
                 if field_maps.get(f):
                     a.update({f: str(i[f])})
             if hh:
-                a.update({"address_1": str(hh["household"]["address_1"])})
-                a.update({"address_2": str(hh["household"]["address_2"])})
-                a.update({"city": str(hh["household"]["city"])})
-                a.update({"state_province": str(hh["household"]["state_province"])})
-                a.update({"postal_code": str(hh["household"]["postal_code"])})
+                for fh in hh["household"]:
+                    if field_maps.get(fh):
+                        a.update({fh: str(hh["household"][fh])})
+
             d.insert(int(i["person_pk"]), a)
             del hh, h
 
@@ -128,6 +131,12 @@ class Main(QtWidgets.QMainWindow):
         self.ui.textLog.moveCursor(QtGui.QTextCursor.End)
         self.ui.textLog.ensureCursorVisible()
         self.ui.textLog.insertHtml(text + "<br />")
+
+    def warn_user(self, text):
+        completeMsg = QtWidgets.QMessageBox()
+        completeMsg.setIcon(QtWidgets.QMessageBox.Information)
+        completeMsg.setText(text)
+        completeMsg.exec_()
 
 
 if __name__ == '__main__':
