@@ -4,7 +4,6 @@ from mainwindow import Ui_MainWindow
 import images
 import veracross_api as v
 import config
-import pprint
 import json
 
 class Main(QtWidgets.QMainWindow):
