@@ -15,8 +15,7 @@ PyQT was selected for it's portability between MacOS and Windows.
     a) VC API Username\
     b) VC API Password\
     c) VC API URL (example: https://api.veracross.com/XX/v2)
-7) Enter field mappings on the Map Fields tab using JSON format
-
+7) Enter field mappings on the Map Fields tab using JSON format\
 `{
 "employee_number": "adp_emp_num",
 "last_name": "adp_last_name",
