@@ -4,7 +4,7 @@ from mainwindow import Ui_MainWindow
 import images
 import veracross_api as v
 import config
-import pprint
+import json
 
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
@@ -42,6 +42,7 @@ class Main(QtWidgets.QMainWindow):
         try:
             self.vcfsdata = []
             self.vc = v.Veracross()
+            self.vc.session.auth = (self.c["vcuser"], self.c["vcpass"])
             self.vcfsdata = self.vc.pull(self.c, "facstaff")
 
             if len(self.vcfsdata) > 0:
@@ -59,35 +60,34 @@ class Main(QtWidgets.QMainWindow):
         :return:
         """
         d = []
+
         for i in self.vcfsdata:
+            h = v.Veracross()
+            h.session.auth = (self.c["vcuser"], self.c["vcpass"])
 
             if i["household_fk"] > 0:
-                h = v.Veracross()
                 hh = h.pull(self.c, "households/" + str(i["household_fk"]))
             else:
                 hh = None
 
-            a = {
-                "employee_number": str(i["person_pk"]),
-                "last_name": str(i["last_name"]),
-                "first_name": str(i["first_name"]),
-                "nick_name": str(i["nick_first_name"]),
-                "middle_name": str(i["middle_name"]),
-                "mobile_phone": str(i["mobile_phone"]),
-                "home_phone": str(i["home_phone"]),
-                "work_phone": str(i["business_phone"]),
-                "email_1": str(i["email_1"])
-            }
+            # Get field maps from the field maps textbrowser.
+            try:
+                field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
+            except:
+                self.warn_user("Invalid Field Maps! Check that field maps are in JSON format.")
+                break
 
+            a = {}
+            for f in i:
+                if field_maps.get(f):
+                    a.update({f: str(i[f])})
             if hh:
-                a.update({"address_1": str(hh["household"]["address_1"])})
-                a.update({"address_2": str(hh["household"]["address_2"])})
-                a.update({"city": str(hh["household"]["city"])})
-                a.update({"state_province": str(hh["household"]["state_province"])})
-                a.update({"postal_code": str(hh["household"]["postal_code"])})
+                for fh in hh["household"]:
+                    if field_maps.get(fh):
+                        a.update({fh: str(hh["household"][fh])})
 
             d.insert(int(i["person_pk"]), a)
-            del(hh)
+            del hh, h
 
         if len(d) > 0:
             self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
@@ -130,6 +130,12 @@ class Main(QtWidgets.QMainWindow):
         self.ui.textLog.moveCursor(QtGui.QTextCursor.End)
         self.ui.textLog.ensureCursorVisible()
         self.ui.textLog.insertHtml(text + "<br />")
+
+    def warn_user(self, text):
+        completeMsg = QtWidgets.QMessageBox()
+        completeMsg.setIcon(QtWidgets.QMessageBox.Information)
+        completeMsg.setText(text)
+        completeMsg.exec_()
 
 
 if __name__ == '__main__':
