@@ -1,15 +1,15 @@
 ![Alt text](screenshots/adp-vc-logo.png?raw=true "Logo")
 
 ## ADP VCSync
-This is the beginning of Veracross to ADP Sync using PyQT.
+This is the beginning of Veracross to ADP Sync using respective API's and  PyQT.
 
 PyQT was selected for it's portability between MacOS and Windows.
 
 ## Quick start to development
 1) Install Python >= 3.6.5 from Python.org
 2) Clone the project using Git or download zip.
-3) (Optional)reate a new virtualenv and activate it.
-3) While in the repo directory from GitHub, type: pip install -r requirements
+3) (Optional) Create a new virtualenv and activate it.
+3) While in the repo directory, type: pip install -r requirements
 4) (Optional) Switch to the development branch for the latest and greatest: git checkout development
 5) To run, type: python main.py
 6) Enter your settings on Settings Tab:\

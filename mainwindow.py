@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
         self.logo_label.setText("")
         self.logo_label.setObjectName("logo_label")
         self.gridLayoutWidget = QtWidgets.QWidget(self.syncTab)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 371, 81))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 371, 71))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(11, 11, 11, 11)

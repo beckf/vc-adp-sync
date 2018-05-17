@@ -1,21 +1,30 @@
-import requests
-import math
-import time
-
 """
 Veracross API Class
 
-This class gives you an easy interface to the Veracross API through your python scripts.
+This class provides an easy interface to the Veracross API for python.
 
-Example of instantiating the class:
+Example of usage:
 
+# Import veracross_api
 import veracross_api as v
+# Create a new instance.
 vc = Veracross()
+# Specify VC API username and password.
 vc.session.auth = ("apiusername", "apipassword")
+# Specify the base API url for your school
 vc.base_url = "https://api.veracroos.com/XX/v2"
+# Tell what data to pull
 data = vc.pull("facstaff")
+---
+OR
+---
+data = vc.pull("facstaff/99999")
 
+Returned will be a dictionary of data.
 """
+import requests
+import math
+import time
 
 __author__ = "Forrest Beck"
 
