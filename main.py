@@ -43,13 +43,14 @@ class Main(QtWidgets.QMainWindow):
             self.vcfsdata = []
             self.vc = v.Veracross()
             self.vc.session.auth = (self.c["vcuser"], self.c["vcpass"])
-            self.vcfsdata = self.vc.pull(self.c, "facstaff")
+            self.vc.base_url = self.c["vcurl"]
+            self.vcfsdata = self.vc.pull("facstaff")
 
             if len(self.vcfsdata) > 0:
                 self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
                 self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-                self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
-                self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
+                self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
+                self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
                 self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records.")
         except:
             self.debug_append_log("Cannot get faculty staff from VC")
@@ -64,9 +65,10 @@ class Main(QtWidgets.QMainWindow):
         for i in self.vcfsdata:
             h = v.Veracross()
             h.session.auth = (self.c["vcuser"], self.c["vcpass"])
+            h.base_url = self.c["vcurl"]
 
             if i["household_fk"] > 0:
-                hh = h.pull(self.c, "households/" + str(i["household_fk"]))
+                hh = h.pull("households/" + str(i["household_fk"]))
             else:
                 hh = None
 
@@ -90,8 +92,8 @@ class Main(QtWidgets.QMainWindow):
             del hh, h
 
         if len(d) > 0:
-            self.ui.lineEditXRateLimitReading.setText(self.vc.rate_limit_remaining)
-            self.ui.lineEditXRateLimitResetReading.setText(self.vc.rate_limit_reset)
+            self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
+            self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.resultsTextEdit.setText(str(d))
