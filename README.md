@@ -39,6 +39,9 @@ ADP API field.\
 ![Alt text](screenshots/sync.png?raw=true "Sync Tab")
 
 
+![Alt text](screenshots/map_fields.png?raw=true "Map Fields Tab")
+
+
 ![Alt text](screenshots/settings.png?raw=true "Settings Tab")
 
 
