@@ -1,2 +1,0 @@
-Field Mapping Tab: Add a tab that allows user to map fields in VC to ADP.  May need to use a local schema file
-for each source.  Perhaps keep a dictionary of fields in the file.

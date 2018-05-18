@@ -26,8 +26,11 @@ class Main(QtWidgets.QMainWindow):
         self.ui.vc_api_user.setText(self.c["vcuser"])
         self.ui.vc_api_pass.setText(self.c["vcpass"])
         self.ui.vc_api_url.setText(self.c["vcurl"])
-        self.ui.txt_fieldMap.setText(self.field_maps)
+        self.ui.lineEdit_adpUsername.setText(self.c["adpnetuser"])
+        self.ui.lineEdit_adpPassword.setText(self.c["adpnetpass"])
         self.ui.lineEdit_adpCertificatePath.setText("~/")
+        self.ui.lineEdit_adpCertificatePath.setText(self.c["adpcertpath"])
+        self.ui.txt_fieldMap.setText(self.field_maps)
 
         # Connect buttons to methods
         self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
@@ -109,7 +112,10 @@ class Main(QtWidgets.QMainWindow):
         settings = {
             "vcuser": self.ui.vc_api_user.text(),
             "vcpass": self.ui.vc_api_pass.text(),
-            "vcurl": self.ui.vc_api_url.text()
+            "vcurl": self.ui.vc_api_url.text(),
+            "adpnetuser": self.ui.lineEdit_adpUsername.text(),
+            "adpnetpass": self.ui.lineEdit_adpPassword.text(),
+            "adpcertpath": self.ui.lineEdit_adpCertificatePath.text()
         }
         # Save settings
         config.save_settings(settings, "config")
@@ -143,7 +149,10 @@ class Main(QtWidgets.QMainWindow):
         completeMsg.exec_()
 
     def select_adp_certfile(self):
-        file = QtWidgets.QFileDialog.getOpenFileName(None, "Select ADP API PFX Certificate", "", "Certificate (*.pfx)")
+        file = QtWidgets.QFileDialog.getOpenFileName(None,
+                                                     "Select ADP API PFX Certificate",
+                                                     "",
+                                                     "Certificate (*.pfx)")
         self.ui.lineEdit_adpCertificatePath.setText(file[0])
 
 

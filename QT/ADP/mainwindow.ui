@@ -367,6 +367,27 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>getVCDataButton</tabstop>
+  <tabstop>parseVCDataButton</tabstop>
+  <tabstop>btn_saveFieldMap</tabstop>
+  <tabstop>txt_fieldMap</tabstop>
+  <tabstop>btn_ResultsPrevious</tabstop>
+  <tabstop>btn_ResultsNext</tabstop>
+  <tabstop>resultsTextEdit</tabstop>
+  <tabstop>vc_api_user</tabstop>
+  <tabstop>vc_api_pass</tabstop>
+  <tabstop>vc_api_url</tabstop>
+  <tabstop>lineEdit_adpUsername</tabstop>
+  <tabstop>lineEdit_adpPassword</tabstop>
+  <tabstop>lineEdit_adpCertificatePath</tabstop>
+  <tabstop>btn_pickerADPCertificate</tabstop>
+  <tabstop>settingsSave</tabstop>
+  <tabstop>lineEditXRateLimitReading</tabstop>
+  <tabstop>lineEditXRateLimitResetReading</tabstop>
+  <tabstop>textLog</tabstop>
+  <tabstop>tabs</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
