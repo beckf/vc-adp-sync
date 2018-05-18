@@ -26,6 +26,10 @@ class Main(QtWidgets.QMainWindow):
         self.ui.vc_api_user.setText(self.c["vcuser"])
         self.ui.vc_api_pass.setText(self.c["vcpass"])
         self.ui.vc_api_url.setText(self.c["vcurl"])
+        self.ui.lineEdit_adpUsername.setText(self.c["adpnetuser"])
+        self.ui.lineEdit_adpPassword.setText(self.c["adpnetpass"])
+        self.ui.lineEdit_adpCertificatePath.setText("~/")
+        self.ui.lineEdit_adpCertificatePath.setText(self.c["adpcertpath"])
         self.ui.txt_fieldMap.setText(self.field_maps)
 
         # Connect buttons to methods
@@ -33,6 +37,8 @@ class Main(QtWidgets.QMainWindow):
         self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
         self.ui.btn_saveFieldMap.clicked.connect(self.save_field_map)
+        self.ui.btn_pickerADPCertificate.clicked.connect(self.select_adp_certfile)
+
 
     def get_vc_data(self):
         """
@@ -60,8 +66,8 @@ class Main(QtWidgets.QMainWindow):
         Parse Action
         :return:
         """
+        self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  Press OK to begin")
         d = []
-
         for i in self.vcfsdata:
             h = v.Veracross()
             h.session.auth = (self.c["vcuser"], self.c["vcpass"])
@@ -72,7 +78,7 @@ class Main(QtWidgets.QMainWindow):
             else:
                 hh = None
 
-            # Get field maps from the field maps textbrowser.
+            # Get field maps from the field maps textBrowser.
             try:
                 field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
             except:
@@ -106,7 +112,10 @@ class Main(QtWidgets.QMainWindow):
         settings = {
             "vcuser": self.ui.vc_api_user.text(),
             "vcpass": self.ui.vc_api_pass.text(),
-            "vcurl": self.ui.vc_api_url.text()
+            "vcurl": self.ui.vc_api_url.text(),
+            "adpnetuser": self.ui.lineEdit_adpUsername.text(),
+            "adpnetpass": self.ui.lineEdit_adpPassword.text(),
+            "adpcertpath": self.ui.lineEdit_adpCertificatePath.text()
         }
         # Save settings
         config.save_settings(settings, "config")
@@ -138,6 +147,13 @@ class Main(QtWidgets.QMainWindow):
         completeMsg.setIcon(QtWidgets.QMessageBox.Information)
         completeMsg.setText(text)
         completeMsg.exec_()
+
+    def select_adp_certfile(self):
+        file = QtWidgets.QFileDialog.getOpenFileName(None,
+                                                     "Select ADP API PFX Certificate",
+                                                     "",
+                                                     "Certificate (*.pfx)")
+        self.ui.lineEdit_adpCertificatePath.setText(file[0])
 
 
 if __name__ == '__main__':
