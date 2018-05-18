@@ -60,8 +60,8 @@ class Main(QtWidgets.QMainWindow):
         Parse Action
         :return:
         """
+        self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  Press OK to begin")
         d = []
-
         for i in self.vcfsdata:
             h = v.Veracross()
             h.session.auth = (self.c["vcuser"], self.c["vcpass"])
@@ -72,7 +72,7 @@ class Main(QtWidgets.QMainWindow):
             else:
                 hh = None
 
-            # Get field maps from the field maps textbrowser.
+            # Get field maps from the field maps textBrowser.
             try:
                 field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
             except:

@@ -22,6 +22,8 @@ data = vc.pull("facstaff/99999")
 
 Returned will be a dictionary of data.
 """
+
+
 import requests
 import math
 import time
@@ -49,19 +51,23 @@ class Veracross(object):
             print("waiting for vc rate limit:" + str(self.rate_limit_reset))
             time.sleep(self.rate_limit_reset + 1)
 
-    def pull(self, source):
+    def pull(self, source, parameters=None):
         """
         Get Veracross Data with pagination
         :param c: config dictionary (see config.py)
         :param source: VC Source (households, facstaff, facstaff/99)
+        :param parameters: Optional API parameters normally in GET request
         :return: records in a list of dictionaries
         """
         try:
-            s = self.base_url + "/" + source + ".json"
+            if parameters is not None:
+                s = self.base_url + "/" + source + ".json" + "?" + parameters
+            else:
+                s = self.base_url + "/" + source + ".json"
+
             r = self.session.get(s)
 
             if r.status_code == 200:
-
                 if 'X-Total-Count' in r.headers:
                     pages = math.ceil(int(r.headers['X-Total-Count']) / 100)
                 else:
@@ -75,7 +81,10 @@ class Veracross(object):
                 while page <= pages:
                     self.set_timers(r.headers['X-Rate-Limit-Remaining'],
                                     r.headers['X-Rate-Limit-Reset'])
-                    r = self.session.get(s + "?page=" + str(page))
+                    if parameters is None:
+                        r = self.session.get(s + "?page=" + str(page))
+                    else:
+                        r = self.session.get(s + "&page=" + str(page))
 
                     records += r.json()
                     page += 1
