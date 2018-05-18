@@ -15,10 +15,10 @@ vc.session.auth = ("apiusername", "apipassword")
 vc.base_url = "https://api.veracroos.com/XX/v2"
 # Tell what data to pull
 data = vc.pull("facstaff")
----
-OR
----
+--- OR ---
 data = vc.pull("facstaff/99999")
+--- OR ---
+data = vc.pull("facstaff", "updated_after=2018-01-01")
 
 Returned will be a dictionary of data.
 """
