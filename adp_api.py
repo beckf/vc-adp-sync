@@ -14,10 +14,11 @@ class Adp(object):
         # Initialize token as expired.
         self.token_expire_time = datetime.datetime.now() - datetime.timedelta(days=1)
         self.bearer_token = ""
+        self.session = requests.Session()
 
     def get_token(self, c):
         if datetime.datetime.now() > self.token_expire_time:
-            s = requests.Session()
+            s = self.session
             s.auth = (c["adpnetuser"], c["adpnetpass"])
             try:
                 r = s.post(self.oauth_url + '?grant_type=client_credentials',

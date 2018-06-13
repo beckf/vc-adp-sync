@@ -23,15 +23,24 @@ class Main(QtWidgets.QMainWindow):
         self.field_maps = config.load_settings("fields")
 
         # Setup LineEdit Text
-        self.ui.vc_api_user.setText(self.c["vcuser"])
-        self.ui.vc_api_pass.setText(self.c["vcpass"])
-        self.ui.vc_api_url.setText(self.c["vcurl"])
-        self.ui.lineEdit_adpUsername.setText(self.c["adpnetuser"])
-        self.ui.lineEdit_adpPassword.setText(self.c["adpnetpass"])
-        self.ui.lineEdit_adpCertificatePEMPath.setText("~/")
-        self.ui.lineEdit_adpCertificatePEMPath.setText(self.c["adpcertpath"])
-        self.ui.lineEdit_adpCertificateKeyPath.setText(self.c["adpcertkeypath"])
-        self.ui.txt_fieldMap.setText(self.field_maps)
+        if "vcuser" in self.c.keys():
+            self.ui.vc_api_user.setText(self.c["vcuser"])
+        if "vcpass" in self.c.keys():
+            self.ui.vc_api_pass.setText(self.c["vcpass"])
+        if "vcurl" in self.c.keys():
+            self.ui.vc_api_url.setText(self.c["vcurl"])
+        if "adpnetuser" in self.c.keys():
+            self.ui.lineEdit_adpUsername.setText(self.c["adpnetuser"])
+        if "adpnetpass" in self.c.keys():
+            self.ui.lineEdit_adpPassword.setText(self.c["adpnetpass"])
+        if "adpcertpath" in self.c.keys():
+            self.ui.lineEdit_adpCertificatePEMPath.setText(self.c["adpcertpath"])
+        if "adpcertkeypath" in self.c.keys():
+            self.ui.lineEdit_adpCertificateKeyPath.setText(self.c["adpcertkeypath"])
+        if "adpvccustomfieldname" in self.c.keys():
+            self.ui.lineEdit_adpVCCustomFieldName.setText(self.c["adpvccustomfieldname"])
+        if self.field_maps:
+            self.ui.txt_fieldMap.setText(self.field_maps)
 
         # Connect buttons to methods
         self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
@@ -67,7 +76,8 @@ class Main(QtWidgets.QMainWindow):
         Parse Action
         :return:
         """
-        self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  Press OK to begin")
+        self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
+                       "Press OK to begin")
         d = []
         for i in self.vcfsdata:
             h = v.Veracross()
@@ -117,7 +127,8 @@ class Main(QtWidgets.QMainWindow):
             "adpnetuser": self.ui.lineEdit_adpUsername.text(),
             "adpnetpass": self.ui.lineEdit_adpPassword.text(),
             "adpcertpath": self.ui.lineEdit_adpCertificatePEMPath.text(),
-            "adpcertkeypath": self.ui.lineEdit_adpCertificateKeyPath.text()
+            "adpcertkeypath": self.ui.lineEdit_adpCertificateKeyPath.text(),
+            "adpvccustomfieldname": self.ui.lineEdit_adpVCCustomFieldName.text()
         }
         # Save settings
         config.save_settings(settings, "config")
