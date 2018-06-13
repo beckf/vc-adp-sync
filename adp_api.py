@@ -9,6 +9,14 @@ Create new object with config as fist parameter.  Config should contain a dictio
 'adpcertkeypath': 'path/to/auth.key'
 }
 
+Example:
+    c = {'adpnetuser': 'xxx-xxxx-xxxx-xxxx-xxxx',
+        'adpnetpass': 'xxx-xxxx-xxxx-xxxx-xxxx',
+        'adpcertpath': 'path/to/cert.pem',
+        'adpcertkeypath': 'path/to/auth.key'
+        }
+    a = api_api.Adp(c)
+    a.get_workers()
 """
 import requests
 import datetime
