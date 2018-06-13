@@ -22,14 +22,15 @@ class Main(QtWidgets.QMainWindow):
         self.c = config.load_settings("config")
         self.field_maps = config.load_settings("fields")
 
-        # Set Labels
+        # Setup LineEdit Text
         self.ui.vc_api_user.setText(self.c["vcuser"])
         self.ui.vc_api_pass.setText(self.c["vcpass"])
         self.ui.vc_api_url.setText(self.c["vcurl"])
         self.ui.lineEdit_adpUsername.setText(self.c["adpnetuser"])
         self.ui.lineEdit_adpPassword.setText(self.c["adpnetpass"])
-        self.ui.lineEdit_adpCertificatePath.setText("~/")
-        self.ui.lineEdit_adpCertificatePath.setText(self.c["adpcertpath"])
+        self.ui.lineEdit_adpCertificatePEMPath.setText("~/")
+        self.ui.lineEdit_adpCertificatePEMPath.setText(self.c["adpcertpath"])
+        self.ui.lineEdit_adpCertificateKeyPath.setText(self.c["adpcertkeypath"])
         self.ui.txt_fieldMap.setText(self.field_maps)
 
         # Connect buttons to methods
@@ -37,8 +38,8 @@ class Main(QtWidgets.QMainWindow):
         self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
         self.ui.btn_saveFieldMap.clicked.connect(self.save_field_map)
-        self.ui.btn_pickerADPCertificate.clicked.connect(self.select_adp_certfile)
-
+        self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
+        self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
 
     def get_vc_data(self):
         """
@@ -115,7 +116,8 @@ class Main(QtWidgets.QMainWindow):
             "vcurl": self.ui.vc_api_url.text(),
             "adpnetuser": self.ui.lineEdit_adpUsername.text(),
             "adpnetpass": self.ui.lineEdit_adpPassword.text(),
-            "adpcertpath": self.ui.lineEdit_adpCertificatePath.text()
+            "adpcertpath": self.ui.lineEdit_adpCertificatePEMPath.text(),
+            "adpcertkeypath": self.ui.lineEdit_adpCertificateKeyPath.text()
         }
         # Save settings
         config.save_settings(settings, "config")
@@ -148,12 +150,23 @@ class Main(QtWidgets.QMainWindow):
         completeMsg.setText(text)
         completeMsg.exec_()
 
-    def select_adp_certfile(self):
+    def select_cert_file(self):
         file = QtWidgets.QFileDialog.getOpenFileName(None,
-                                                     "Select ADP API PFX Certificate",
+                                                     "Select ADP API Certificate (Base64 PEM)",
                                                      "",
-                                                     "Certificate (*.pfx)")
-        self.ui.lineEdit_adpCertificatePath.setText(file[0])
+                                                     "Certificate (*.pem)")
+        self.ui.lineEdit_adpCertificatePEMPath.setText(file[0])
+
+    def select_key_file(self):
+        """
+        Selects a file
+        :return:
+        """
+        file = QtWidgets.QFileDialog.getOpenFileName(None,
+                                                     "Select ADP API Certificate Key",
+                                                     "",
+                                                     "Certificate (*.key)")
+        self.ui.lineEdit_adpCertificateKeyPath.setText(file[0])
 
 
 if __name__ == '__main__':

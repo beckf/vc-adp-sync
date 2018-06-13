@@ -30,7 +30,9 @@ import time
 
 __author__ = "Forrest Beck"
 
+
 class Veracross(object):
+
     def __init__(self):
         self.rate_limit_remaining = 300
         self.rate_limit_reset = 0
