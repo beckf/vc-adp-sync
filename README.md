@@ -13,9 +13,14 @@ PyQT was selected for it's portability between MacOS and Windows.
 4) (Optional) Switch to the development branch for the latest and greatest: git checkout development
 5) To run, type: python main.py
 6) Enter your settings on Settings Tab:\
-    a) VC API Username\
-    b) VC API Password\
-    c) VC API URL (example: https://api.veracross.com/XX/v2)
+    a) VC API username\
+    b) VC API password\
+    c) VC API URL (example: https://api.veracross.com/XX/v2)\
+    d) ADP network username\
+    e) ADP network secret\
+    f) Custom Field Name for VC ID in ADP\
+    g) Path to certificate signed by ADP\
+    h) Path to key for ADP certificate
 7) Enter field mappings on the Map Fields tab using JSON format. Each key is a Veracross API field mapped to a
 ADP API field.\
 `{

@@ -6,13 +6,10 @@ if sys.platform == "darwin":
     # OS X
     config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync'
     if not os.path.isfile(config_file + ".db"):
-        default = {
-            "vcuser": str(" "),
-            "vcpass": str(" "),
-            "vcurl": str(" ")
-        }
+        default = {}
         d = shelve.open(config_file, flag='c', writeback=True)
         d["config"] = default
+        d["fields"] = default
         d.sync()
         d.close()
 

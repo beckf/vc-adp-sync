@@ -194,14 +194,47 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
-        <width>531</width>
-        <height>231</height>
+        <y>20</y>
+        <width>731</width>
+        <height>339</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="5" column="0">
+        <widget class="QLabel" name="lbl_adpVCCustomFieldName">
+         <property name="toolTip">
+          <string>Name of custom field in ADP where the Veracross ID is stored.</string>
+         </property>
+         <property name="text">
+          <string>ADP VC Custom Field Name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QPushButton" name="btn_pickerADPCertificateKey">
+         <property name="text">
+          <string>Select Certificate Key</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="lbl_CertificateKeyPath">
+         <property name="toolTip">
+          <string>Certificate file used to create ADP certificate above.</string>
+         </property>
+         <property name="text">
+          <string>ADP Certificate Key</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLineEdit" name="lineEdit_adpCertificateKeyPath"/>
+       </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="lb_adpNetworkUsername">
+        <widget class="QLabel" name="lbl_adpNetworkUsername">
+         <property name="toolTip">
+          <string>ADP Network Username provided by ADP.</string>
+         </property>
          <property name="text">
           <string>ADP Network Username</string>
          </property>
@@ -211,7 +244,10 @@
         <widget class="QLineEdit" name="vc_api_url"/>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_vcapiurl">
+        <widget class="QLabel" name="lbl_vcapiurl">
+         <property name="toolTip">
+          <string>Veracross API Base URL.</string>
+         </property>
          <property name="text">
           <string>Veracross API Base URL</string>
          </property>
@@ -235,35 +271,27 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_vcapiusername">
+        <widget class="QLabel" name="lbl_vcapiusername">
+         <property name="toolTip">
+          <string>Veracross API Username provided by Veracross.</string>
+         </property>
          <property name="text">
           <string>Veracross API Username</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_vcpassword">
+        <widget class="QLabel" name="lbl_vcpassword">
+         <property name="toolTip">
+          <string>Veracross API Password provided by Veracross.</string>
+         </property>
          <property name="text">
           <string>Veracross API Password</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="lineEdit_adpPassword">
-         <property name="echoMode">
-          <enum>QLineEdit::PasswordEchoOnEdit</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lbl_adpNetworkPassword">
-         <property name="text">
-          <string>ADP Network Password</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_adpCertificatePath"/>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="lineEdit_adpCertificatePEMPath"/>
        </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="lineEdit_adpUsername">
@@ -272,17 +300,40 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_2">
+       <item row="7" column="0">
+        <widget class="QLabel" name="lbl_CertificatePath">
+         <property name="toolTip">
+          <string>Path to Base64 encoded certificate provided by ADP.</string>
+         </property>
          <property name="text">
-          <string>ADP Certificate</string>
+          <string>ADP Certificate (PEM)</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <widget class="QPushButton" name="btn_pickerADPCertificate">
          <property name="text">
           <string>Select Certificate</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="lineEdit_adpVCCustomFieldName"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lbl_adpNetworkPassword">
+         <property name="toolTip">
+          <string>ADP Network Password provided by ADP.</string>
+         </property>
+         <property name="text">
+          <string>ADP Network Password</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="lineEdit_adpPassword">
+         <property name="echoMode">
+          <enum>QLineEdit::PasswordEchoOnEdit</enum>
          </property>
         </widget>
        </item>
@@ -379,9 +430,7 @@
   <tabstop>vc_api_pass</tabstop>
   <tabstop>vc_api_url</tabstop>
   <tabstop>lineEdit_adpUsername</tabstop>
-  <tabstop>lineEdit_adpPassword</tabstop>
-  <tabstop>lineEdit_adpCertificatePath</tabstop>
-  <tabstop>btn_pickerADPCertificate</tabstop>
+  <tabstop>lineEdit_adpCertificatePEMPath</tabstop>
   <tabstop>settingsSave</tabstop>
   <tabstop>lineEditXRateLimitReading</tabstop>
   <tabstop>lineEditXRateLimitResetReading</tabstop>
