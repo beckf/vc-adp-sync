@@ -48,9 +48,7 @@ class Veracross(object):
         """
         self.rate_limit_remaining = int(limit_remaining)
         self.rate_limit_reset = int(limit_reset)
-        print(self.rate_limit_remaining)
         if self.rate_limit_remaining == 1:
-            print("waiting for vc rate limit:" + str(self.rate_limit_reset))
             time.sleep(self.rate_limit_reset + 1)
 
     def pull(self, source, parameters=None):

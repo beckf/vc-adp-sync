@@ -2,12 +2,7 @@
 ADP API Class
 Built for Veracross ADP Sync, but can be portable.
 
-Create new object with config as fist parameter.  Config should contain a dictionary that contains at a minimum:
-{'adpnetuser': 'xxx-xxxx-xxxx-xxxx-xxxx',
-'adpnetpass': 'xxx-xxxx-xxxx-xxxx-xxxx',
-'adpcertpath': 'path/to/cert.pem',
-'adpcertkeypath': 'path/to/auth.key'
-}
+Create new object with config as fist parameter.  Config should be in a dictionary (see below).
 
 Example:
     c = {'adpnetuser': 'xxx-xxxx-xxxx-xxxx-xxxx',
@@ -16,10 +11,12 @@ Example:
         'adpcertkeypath': 'path/to/auth.key'
         }
     a = api_api.Adp(c)
-    a.get_workers()
+    a.workers()
 """
+
 import requests
 import datetime
+import math
 
 __author__ = "Forrest Beck"
 
@@ -35,6 +32,7 @@ class Adp(object):
         # Initialize token as expired.
         self.token_expire_time = datetime.datetime.now() - datetime.timedelta(days=1)
         self.bearer_token = ""
+        self.api_record_batch_size = 50
         self.config = config
         # Create a new session for API calls. This will bearer token.
         self.session = requests.Session()
@@ -63,14 +61,33 @@ class Adp(object):
         else:
             return self.bearer_token
 
-    def get_workers(self):
+    def workers(self):
         # Check token is present and not expired.
         self.get_token()
+        api_worker_url = 'https://api.adp.com/hr/v2/workers'
 
         try:
-            w = self.session.get('https://api.adp.com/hr/v2/worker-demographics')
-            r = w.json()
-            return r["workers"]
+            w = self.session.get(api_worker_url + '?count=true')
+            records = []
+            if w.status_code == 200:
+                r = w.json()
+                c = int(r['meta']['totalNumber'])
+                b = math.ceil(int(c) / self.api_record_batch_size)
+
+                last_batch = 0
+                last_record_set = 0
+
+                while last_batch <= b and last_record_set is not c:
+                    w = self.session.get(api_worker_url + '?$top=' + str(self.api_record_batch_size) +
+                                         '&$skip=' + str(last_record_set))
+                    if w.status_code == 200:
+                        r = w.json()
+                        records += r['workers']
+
+                        last_record_set = last_batch * self.api_record_batch_size
+                        last_batch += 1
+
+            return records
         except:
             return None
 
