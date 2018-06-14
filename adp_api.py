@@ -2,7 +2,8 @@
 ADP API Class
 Built for Veracross ADP Sync, but can be portable.
 
-Create new object with config as fist parameter.  Config should be in a dictionary (see below).
+Instantiate new class with config as fist parameter.
+Config should be in a dictionary (see below).
 
 Example:
     c = {'adpnetuser': 'xxx-xxxx-xxxx-xxxx-xxxx',
@@ -11,7 +12,10 @@ Example:
         'adpcertkeypath': 'path/to/auth.key'
         }
     a = api_api.Adp(c)
-    a.workers()
+    d = a.workers()
+    print(d)
+
+Data is returned in a dictionary.
 """
 
 import requests

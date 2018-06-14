@@ -235,7 +235,7 @@ class Ui_MainWindow(object):
         self.parseVCDataButton.setText(_translate("MainWindow", "Parse Veracross Data"))
         self.vcFSRecordCount.setText(_translate("MainWindow", "0 Faculty Staff Records"))
         self.btn_getADPData.setText(_translate("MainWindow", "Get ADP Data"))
-        self.adpRecordCount.setText(_translate("MainWindow", "0 Faculty Staff Records"))
+        self.adpRecordCount.setText(_translate("MainWindow", "0 Employee Records"))
         self.btn_parseADPData.setText(_translate("MainWindow", "Parse ADP Data"))
         self.tabs.setTabText(self.tabs.indexOf(self.syncTab), _translate("MainWindow", "Sync"))
         self.label.setText(_translate("MainWindow", "Insert field mapping in JSON format.  See README."))

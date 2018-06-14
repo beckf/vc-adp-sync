@@ -65,9 +65,7 @@ class Main(QtWidgets.QMainWindow):
         """
         try:
             self.vcfsdata = []
-            self.vc = v.Veracross()
-            self.vc.session.auth = (self.c["vcuser"], self.c["vcpass"])
-            self.vc.base_url = self.c["vcurl"]
+            self.vc = v.Veracross(self.c)
             self.vcfsdata = self.vc.pull("facstaff")
 
             if len(self.vcfsdata) > 0:
@@ -88,9 +86,7 @@ class Main(QtWidgets.QMainWindow):
                        "Press OK to begin")
         d = []
         for i in self.vcfsdata:
-            h = v.Veracross()
-            h.session.auth = (self.c["vcuser"], self.c["vcpass"])
-            h.base_url = self.c["vcurl"]
+            h = v.Veracross(self.c)
 
             if i["household_fk"] > 0:
                 hh = h.pull("households/" + str(i["household_fk"]))
@@ -128,9 +124,9 @@ class Main(QtWidgets.QMainWindow):
             a = adp.Adp(self.c)
             self.adpfsdata = a.workers()
             if len(self.adpfsdata) > 0:
-                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Faculty Staff Records")
+                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Employee Records")
                 self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " faculty staff records in ADP.")
+                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
 
         except:
             return None
