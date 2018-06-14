@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from mainwindow import Ui_MainWindow
 import images
 import veracross_api as v
+import adp_api as adp
 import config
 import json
 
@@ -17,6 +18,8 @@ class Main(QtWidgets.QMainWindow):
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
         self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
         self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
+        self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
+        self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
         # Gather Config
         self.c = config.load_settings("config")
@@ -43,10 +46,15 @@ class Main(QtWidgets.QMainWindow):
             self.ui.txt_fieldMap.setText(self.field_maps)
 
         # Connect buttons to methods
+        # Sync Tab Buttons
         self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
-        self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
+        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
+        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
+        # Map Field Tab Buttons
         self.ui.btn_saveFieldMap.clicked.connect(self.save_field_map)
+        # Settings Buttons
+        self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
 
@@ -67,7 +75,7 @@ class Main(QtWidgets.QMainWindow):
                 self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
                 self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
                 self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
-                self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records.")
+                self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
         except:
             self.debug_append_log("Cannot get faculty staff from VC")
 
@@ -114,6 +122,23 @@ class Main(QtWidgets.QMainWindow):
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.resultsTextEdit.setText(str(d))
+
+    def get_adp_data(self):
+        try:
+            a = adp.Adp(self.c)
+            self.adpfsdata = a.workers()
+            if len(self.adpfsdata) > 0:
+                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Faculty Staff Records")
+                self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " faculty staff records in ADP.")
+
+        except:
+            return None
+
+
+
+    def parse_adp_data(self):
+        return True
 
     def save_settings_button(self):
         """
