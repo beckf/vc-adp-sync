@@ -5,32 +5,21 @@ import shelve
 if sys.platform == "darwin":
     # OS X
     config_file = os.environ['HOME'] + '/Library/Preferences/vc-adp-sync'
-    if not os.path.isfile(config_file + ".db"):
-        default = {}
-        d = shelve.open(config_file, flag='c', writeback=True)
-        d["config"] = default
-        d["fields"] = default
-        d.sync()
-        d.close()
 
 elif sys.platform == "win32":
     # Windows
-    config_path = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
-    config_file = config_path + "/vc-adp-sync"
+    config_file = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
 
-    if not os.path.isdir(config_path):
-        os.makedirs(config_path)
+else:
+    config_file = "/vc-adp-sync"
 
-    if not os.path.isfile(config_file + ".db"):
-        default = {
-            "vcuser": str(" "),
-            "vcpass": str(" "),
-            "vcurl": str(" ")
-        }
-        d = shelve.open(config_file, flag='c', writeback=True)
-        d["config"] = default
-        d.sync()
-        d.close()
+if not os.path.isfile(config_file + ".db"):
+    default = {}
+    d = shelve.open(config_file, flag='c', writeback=True)
+    d["config"] = default
+    d["fields"] = default
+    d.sync()
+    d.close()
 
 
 def save_settings(settings, key):

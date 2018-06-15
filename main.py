@@ -131,10 +131,19 @@ class Main(QtWidgets.QMainWindow):
         except:
             return None
 
-
-
     def parse_adp_data(self):
-        return True
+        a = {}
+        d = []
+
+        # Get VC ID
+        for i in self.adpfsdata:
+            if 'customFieldGroup' in i['person'].keys():
+                if 'stringFields' in i['person']['customFieldGroup'].keys():
+                    for s in i['person']['customFieldGroup']['stringFields']:
+                        if s['nameCode']['shortName'] == 'VC Person ID':
+                            d.insert(int(s['stringValue']), s['stringValue'])
+
+        self.ui.resultsTextEdit.setText(str(d))
 
     def save_settings_button(self):
         """

@@ -18,7 +18,7 @@ data = vc.pull("facstaff")
 print(data)
 data = vc.pull("facstaff/99999")
 print(data)
-data = vc.pull("facstaff", "updated_after=2018-01-01")
+data = vc.pull("facstaff", "updated_after=2018-05-01")
 print(data)
 
 Returned will be a dictionary of data.
@@ -45,12 +45,20 @@ class Veracross(object):
         Sets the rate limits
         :param limit_remaining: Count of API calls remaining from header X-Rate-Limit-Remaining
         :param limit_reset: Reset Timer from header X-Rate-Limit-Reset
-        :return: nothing
+        :return: None
         """
         self.rate_limit_remaining = int(limit_remaining)
         self.rate_limit_reset = int(limit_reset)
         if self.rate_limit_remaining == 1:
             time.sleep(self.rate_limit_reset + 1)
+
+    def set_auth(self):
+        """
+        Ensures auth header is in place.
+        :return: None
+        """
+        if not self.session.auth:
+            self.session.auth = (self.config['vcuser'], self.config['vcpass'])
 
     def pull(self, source, parameters=None):
         """
@@ -60,12 +68,13 @@ class Veracross(object):
         :return: records in a list of dictionaries
         """
         try:
+            self.set_auth()
+
             if parameters is not None:
                 s = self.config['vcurl'] + "/" + source + ".json" + "?" + parameters
             else:
                 s = self.config['vcurl'] + "/" + source + ".json"
 
-            self.session.auth = (self.config['vcuser'], self.config['vcpass'])
             r = self.session.get(s)
 
             if r.status_code == 200:
