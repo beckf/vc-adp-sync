@@ -3,22 +3,23 @@ Veracross API Class
 
 This class provides an easy interface to the Veracross API for python.
 
+Rate limiting and pagination will be handled automatically.
+
 Example of usage:
 
-# Import veracross_api
+c = {'vcurl': 'https://api.veracross.com/XschoolshortnameX/v2',
+        'vcuser': 'username',
+        'vcpass': 'password'
+        }
+
 import veracross_api as v
-# Create a new instance.
-vc = Veracross()
-# Specify VC API username and password.
-vc.session.auth = ("apiusername", "apipassword")
-# Specify the base API url for your school
-vc.base_url = "https://api.veracroos.com/XX/v2"
-# Tell what data to pull
+vc = Veracross(c)
 data = vc.pull("facstaff")
---- OR ---
+print(data)
 data = vc.pull("facstaff/99999")
---- OR ---
-data = vc.pull("facstaff", "updated_after=2018-01-01")
+print(data)
+data = vc.pull("facstaff", "updated_after=2018-05-01")
+print(data)
 
 Returned will be a dictionary of data.
 """
@@ -33,37 +34,46 @@ __author__ = "Forrest Beck"
 
 class Veracross(object):
 
-    def __init__(self):
+    def __init__(self, config):
         self.rate_limit_remaining = 300
         self.rate_limit_reset = 0
         self.session = requests.Session()
-        self.base_url = "https://api.veracross.com/XX/v2"
+        self.config = config
 
     def set_timers(self, limit_remaining, limit_reset):
         """
         Sets the rate limits
         :param limit_remaining: Count of API calls remaining from header X-Rate-Limit-Remaining
         :param limit_reset: Reset Timer from header X-Rate-Limit-Reset
-        :return: nothing
+        :return: None
         """
         self.rate_limit_remaining = int(limit_remaining)
         self.rate_limit_reset = int(limit_reset)
         if self.rate_limit_remaining == 1:
             time.sleep(self.rate_limit_reset + 1)
 
+    def set_auth(self):
+        """
+        Ensures auth header is in place.
+        :return: None
+        """
+        if not self.session.auth:
+            self.session.auth = (self.config['vcuser'], self.config['vcpass'])
+
     def pull(self, source, parameters=None):
         """
         Get Veracross Data with pagination
-        :param c: config dictionary (see config.py)
         :param source: VC Source (households, facstaff, facstaff/99)
         :param parameters: Optional API parameters normally in GET request
         :return: records in a list of dictionaries
         """
         try:
+            self.set_auth()
+
             if parameters is not None:
-                s = self.base_url + "/" + source + ".json" + "?" + parameters
+                s = self.config['vcurl'] + "/" + source + ".json" + "?" + parameters
             else:
-                s = self.base_url + "/" + source + ".json"
+                s = self.config['vcurl'] + "/" + source + ".json"
 
             r = self.session.get(s)
 

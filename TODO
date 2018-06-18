@@ -1,2 +1,2 @@
-* Encrypt settings file -  pyAesCrypt
-* ADP Pagination
+* Encrypt settings file using pyAesCrypt
+* Create dict that matches VC data using new Dict Class

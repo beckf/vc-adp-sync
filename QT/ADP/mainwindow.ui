@@ -62,6 +62,9 @@
        </item>
        <item row="0" column="0">
         <widget class="QPushButton" name="getVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Get Veracross Data</string>
          </property>
@@ -69,6 +72,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QPushButton" name="parseVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Parse Veracross Data</string>
          </property>
@@ -97,6 +103,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="btn_getADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Get ADP Data</string>
          </property>
@@ -105,12 +114,15 @@
        <item row="2" column="2">
         <widget class="QLabel" name="adpRecordCount">
          <property name="text">
-          <string>0 Faculty Staff Records</string>
+          <string>0 Employee Records</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="btn_parseADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Parse ADP Data</string>
          </property>
@@ -124,6 +136,83 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="resultsTab">
+     <attribute name="title">
+      <string>Results</string>
+     </attribute>
+     <widget class="QTextEdit" name="vcResultsTextEdit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>721</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_ResultsPrevious">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>20</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Previous</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_ResultsNext">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>20</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Next</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="adpResultsTextEdit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>721</width>
+        <height>181</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Veracross Results</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>250</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ADP Results</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="fieldMapTab">
@@ -165,47 +254,6 @@
         </widget>
        </item>
       </layout>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="resultsTab">
-     <attribute name="title">
-      <string>Results</string>
-     </attribute>
-     <widget class="QTextEdit" name="resultsTextEdit">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>721</width>
-        <height>371</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btn_ResultsPrevious">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>20</y>
-        <width>113</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Previous</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btn_ResultsNext">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>20</y>
-        <width>113</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Next</string>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="settingsTab">
@@ -460,7 +508,7 @@
   <tabstop>txt_fieldMap</tabstop>
   <tabstop>btn_ResultsPrevious</tabstop>
   <tabstop>btn_ResultsNext</tabstop>
-  <tabstop>resultsTextEdit</tabstop>
+  <tabstop>vcResultsTextEdit</tabstop>
   <tabstop>vc_api_user</tabstop>
   <tabstop>vc_api_pass</tabstop>
   <tabstop>vc_api_url</tabstop>

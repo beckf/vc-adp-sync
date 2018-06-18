@@ -6,6 +6,7 @@ import veracross_api as v
 import adp_api as adp
 import config
 import json
+import ast
 
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
@@ -23,7 +24,7 @@ class Main(QtWidgets.QMainWindow):
 
         # Gather Config
         self.c = config.load_settings("config")
-        self.field_maps = config.load_settings("fields")
+        self.field_maps = ast.literal_eval(config.load_settings("fields"))
 
         # Setup LineEdit Text
         if "vcuser" in self.c.keys():
@@ -43,7 +44,7 @@ class Main(QtWidgets.QMainWindow):
         if "adpvccustomfieldname" in self.c.keys():
             self.ui.lineEdit_adpVCCustomFieldName.setText(self.c["adpvccustomfieldname"])
         if self.field_maps:
-            self.ui.txt_fieldMap.setText(self.field_maps)
+            self.ui.txt_fieldMap.setText(str(self.field_maps))
 
         # Connect buttons to methods
         # Sync Tab Buttons
@@ -58,6 +59,34 @@ class Main(QtWidgets.QMainWindow):
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
 
+        # Enable Buttons
+        self.ui.getVCDataButton.setEnabled(True)
+
+    def get_nested_dict(self, data, path, default=None):
+        keys = path.split("/")
+        val = None
+        for key in keys:
+            if val:
+                if isinstance(val, list):
+                    val = [v.get(key, default) if v else None for v in val]
+                else:
+                    val = val.get(key, default)
+            else:
+                val = dict.get(data, key, default)
+            if not val:
+                break;
+        return val
+
+    def map_field(self, field):
+        """
+        Look in field maps for what key to store data in.
+        :param field:
+        :return:
+        """
+        for k, v in self.field_maps.items():
+            if field in v:
+                return k
+
     def get_vc_data(self):
         """
         Get VC Data
@@ -65,9 +94,7 @@ class Main(QtWidgets.QMainWindow):
         """
         try:
             self.vcfsdata = []
-            self.vc = v.Veracross()
-            self.vc.session.auth = (self.c["vcuser"], self.c["vcpass"])
-            self.vc.base_url = self.c["vcurl"]
+            self.vc = v.Veracross(self.c)
             self.vcfsdata = self.vc.pull("facstaff")
 
             if len(self.vcfsdata) > 0:
@@ -76,33 +103,34 @@ class Main(QtWidgets.QMainWindow):
                 self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
                 self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
                 self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
+                # Enable next step
+                self.ui.parseVCDataButton.setEnabled(True)
         except:
             self.debug_append_log("Cannot get faculty staff from VC")
 
     def parse_vc_data(self):
         """
-        Parse Action
+        Parse Veracross Action
         :return:
         """
         self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
                        "Press OK to begin")
-        d = []
+
+        # Get field maps from the field maps textBrowser.
+        try:
+            field_maps = ast.literal_eval(config.load_settings("fields"))
+        except:
+            self.warn_user("Invalid Field Maps! Check README for more information.")
+            return None
+
+        d = {}
         for i in self.vcfsdata:
-            h = v.Veracross()
-            h.session.auth = (self.c["vcuser"], self.c["vcpass"])
-            h.base_url = self.c["vcurl"]
+            h = v.Veracross(self.c)
 
             if i["household_fk"] > 0:
                 hh = h.pull("households/" + str(i["household_fk"]))
             else:
                 hh = None
-
-            # Get field maps from the field maps textBrowser.
-            try:
-                field_maps = json.loads(self.ui.txt_fieldMap.toPlainText())
-            except:
-                self.warn_user("Invalid Field Maps! Check that field maps are in JSON format.")
-                break
 
             a = {}
             for f in i:
@@ -113,7 +141,7 @@ class Main(QtWidgets.QMainWindow):
                     if field_maps.get(fh):
                         a.update({fh: str(hh["household"][fh])})
 
-            d.insert(int(i["person_pk"]), a)
+            d.update({int(i["person_pk"]): a})
             del hh, h
 
         if len(d) > 0:
@@ -121,24 +149,50 @@ class Main(QtWidgets.QMainWindow):
             self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-            self.ui.resultsTextEdit.setText(str(d))
+            self.ui.vcResultsTextEdit.setText(str(sorted(d)))
+            # Enable next step
+            self.ui.btn_getADPData.setEnabled(True)
 
     def get_adp_data(self):
         try:
             a = adp.Adp(self.c)
             self.adpfsdata = a.workers()
             if len(self.adpfsdata) > 0:
-                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Faculty Staff Records")
+                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Employee Records")
                 self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " faculty staff records in ADP.")
-
+                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
+                # Enable next step
+                self.ui.btn_parseADPData.setEnabled(True)
         except:
             return None
 
-
-
     def parse_adp_data(self):
-        return True
+        d = {}
+
+        if not self.c["adpvccustomfieldname"]:
+            return None
+
+        # Get field maps from the field maps textBrowser.
+        try:
+            field_maps = ast.literal_eval(config.load_settings("fields"))
+        except:
+            self.warn_user("Invalid Field Maps! Check README for more information.")
+            return None
+
+        for i in self.adpfsdata:
+            a = {}
+            # Get VC ID from field set in settings
+            # VC Person_PK must be a custom ADP field.
+            if self.get_nested_dict(i, "person/customFieldGroup/stringFields"):
+                for s in i['person']['customFieldGroup']['stringFields']:
+                    if s['nameCode']['shortName'] == self.c["adpvccustomfieldname"]:
+                        vcid = s['stringValue']
+            if vcid:
+                for f in field_maps:
+                    a.update({f: self.get_nested_dict(i, str(field_maps[f]))})
+                d.update({vcid: a})
+
+        self.ui.adpResultsTextEdit.setText(str(sorted(d)))
 
     def save_settings_button(self):
         """
