@@ -78,7 +78,7 @@ class Adp(object):
                 c = int(r['meta']['totalNumber'])
                 b = math.ceil(int(c) / self.api_record_batch_size)
 
-                last_batch = 0
+                last_batch = 1
                 last_record_set = 0
 
                 while last_batch <= b and last_record_set is not c:

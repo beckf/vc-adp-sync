@@ -1,9 +1,12 @@
 ![Alt text](screenshots/adp-vc-logo.png?raw=true "Logo")
 
 ## ADP VCSync
-This is the beginning of Veracross to ADP Sync using respective API's and  PyQT.
+This is the beginning of Veracross to ADP Sync using respective API's
+and PyQT. The goal is to sync demographic information stored in Veracross
+with ADP Payroll. Employees are matched by their Veracross PersonPK stored
+in both systems.
 
-PyQT was selected for it's portability between MacOS and Windows.
+PyQT was selected for it's portability between both MacOS and Windows.
 
 ## Quick start to development
 1) Install Python >= 3.6.5 from Python.org

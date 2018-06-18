@@ -62,6 +62,9 @@
        </item>
        <item row="0" column="0">
         <widget class="QPushButton" name="getVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Get Veracross Data</string>
          </property>
@@ -69,6 +72,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QPushButton" name="parseVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Parse Veracross Data</string>
          </property>
@@ -97,6 +103,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="btn_getADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Get ADP Data</string>
          </property>
@@ -111,6 +120,9 @@
        </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="btn_parseADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Parse ADP Data</string>
          </property>
