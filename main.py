@@ -115,6 +115,14 @@ class Main(QtWidgets.QMainWindow):
         """
         self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
                        "Press OK to begin")
+
+        # Get field maps from the field maps textBrowser.
+        try:
+            field_maps = ast.literal_eval(config.load_settings("fields"))
+        except:
+            self.warn_user("Invalid Field Maps! Check README for more information.")
+            return None
+
         d = {}
         for i in self.vcfsdata:
             h = v.Veracross(self.c)
@@ -123,13 +131,6 @@ class Main(QtWidgets.QMainWindow):
                 hh = h.pull("households/" + str(i["household_fk"]))
             else:
                 hh = None
-
-            # Get field maps from the field maps textBrowser.
-            try:
-                field_maps = ast.literal_eval(config.load_settings("fields"))
-            except:
-                self.warn_user("Invalid Field Maps! Check README for more information.")
-                break
 
             a = {}
             for f in i:
@@ -148,7 +149,7 @@ class Main(QtWidgets.QMainWindow):
             self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-            self.ui.resultsTextEdit.setText(str(d))
+            self.ui.vcResultsTextEdit.setText(str(sorted(d)))
             # Enable next step
             self.ui.btn_getADPData.setEnabled(True)
 
@@ -166,22 +167,32 @@ class Main(QtWidgets.QMainWindow):
             return None
 
     def parse_adp_data(self):
-        a = {}
         d = {}
 
         if not self.c["adpvccustomfieldname"]:
             return None
 
+        # Get field maps from the field maps textBrowser.
+        try:
+            field_maps = ast.literal_eval(config.load_settings("fields"))
+        except:
+            self.warn_user("Invalid Field Maps! Check README for more information.")
+            return None
+
         for i in self.adpfsdata:
+            a = {}
             # Get VC ID from field set in settings
             # VC Person_PK must be a custom ADP field.
             if self.get_nested_dict(i, "person/customFieldGroup/stringFields"):
                 for s in i['person']['customFieldGroup']['stringFields']:
                     if s['nameCode']['shortName'] == self.c["adpvccustomfieldname"]:
                         vcid = s['stringValue']
+            if vcid:
+                for f in field_maps:
+                    a.update({f: self.get_nested_dict(i, str(field_maps[f]))})
+                d.update({vcid: a})
 
-
-        self.ui.resultsTextEdit.setText(str(d))
+        self.ui.adpResultsTextEdit.setText(str(sorted(d)))
 
     def save_settings_button(self):
         """
