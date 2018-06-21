@@ -26,25 +26,20 @@ PyQT was selected for it's portability between both MacOS and Windows.
     h) Path to key for ADP certificate
 7) Enter field mappings on the Map Fields tab using JSON format. Each key is a Veracross API field mapped to a
 ADP API field.\
-`{
-"employee_number": "adp_emp_num",
-"last_name": "adp_last_name",
-"first_name": "adp_first_name",
-"nick_name": "adp_nick_name",
-"middle_name": "adp_middle_name",
-"mobile_phone": "adp_mobile_phone",
-"home_phone": "adp_home_phone",
-"work_phone": "adp_work_phone",
-"email_1": "adp_email_1",
-"address_1": "adp_address_1",
-"address_2": "adp_address_2",
-"city": "adp_city",
-"state_province": "adp_state",
-"postal_code": "adp_postal"
-}`
+`
+﻿{'first_name': 'person/legalName/givenName', 
+'last_name': 'person/legalName/familyName1',
+'address_1': 'person/legalAddress/lineOne',
+'city': 'person/legalAddress/cityName',
+'state_province': 'person/legalAddress/countrySubdivisionLevel1/shortName',
+'postal_code': 'person/legalAddress/postalCode'}
+`
 
 
 ![Alt text](screenshots/sync.png?raw=true "Sync Tab")
+
+
+![Alt text](screenshots/results.png?raw=true "Results Tab")
 
 
 ![Alt text](screenshots/map_fields.png?raw=true "Map Fields Tab")
