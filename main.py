@@ -149,7 +149,7 @@ class Main(QtWidgets.QMainWindow):
             self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
-            self.ui.vcResultsTextEdit.setText(str(sorted(d)))
+            self.ui.vcResultsTextEdit.setText(str(d))
             # Enable next step
             self.ui.btn_getADPData.setEnabled(True)
 
@@ -192,7 +192,9 @@ class Main(QtWidgets.QMainWindow):
                     a.update({f: self.get_nested_dict(i, str(field_maps[f]))})
                 d.update({vcid: a})
 
-        self.ui.adpResultsTextEdit.setText(str(sorted(d)))
+        if len(d) > 0:
+            self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+            self.ui.adpResultsTextEdit.setText(str(d))
 
     def save_settings_button(self):
         """
