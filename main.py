@@ -15,6 +15,9 @@ class Main(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # Ensure Sync Tab is active
+        self.ui.tabs.setCurrentIndex(0)
+
         # Set Images
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
         self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
@@ -48,16 +51,19 @@ class Main(QtWidgets.QMainWindow):
 
         # Connect buttons to methods
         # Sync Tab Buttons
-        self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
-        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
-        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
-        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
+        self.ui.btn_quit.clicked.connect(self.close_app)
+        self.ui.btn_sync.clicked.connect(self.sync_data)
         # Map Field Tab Buttons
         self.ui.btn_saveFieldMap.clicked.connect(self.save_field_map)
         # Settings Buttons
         self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
+        # Debug Tab Buttons
+        self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
+        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
+        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
+        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
 
         # Enable Buttons
         self.ui.getVCDataButton.setEnabled(True)
@@ -113,8 +119,8 @@ class Main(QtWidgets.QMainWindow):
         Parse Veracross Action
         :return:
         """
-        self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
-                       "Press OK to begin")
+        # self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
+                       # "Press OK to begin")
 
         # Get field maps from the field maps textBrowser.
         try:
@@ -145,11 +151,16 @@ class Main(QtWidgets.QMainWindow):
             del hh, h
 
         if len(d) > 0:
+            # Store parsed data in self
+            self.vcParsedData = d
+
+            # Notify the interface
             self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
             self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
             self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.vcResultsTextEdit.setText(str(d))
+
             # Enable next step
             self.ui.btn_getADPData.setEnabled(True)
 
@@ -193,8 +204,21 @@ class Main(QtWidgets.QMainWindow):
                 d.update({vcid: a})
 
         if len(d) > 0:
+            # Store parsed data in self
+            self.adpParsedData = d
+
+            # Notify the interface
             self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.adpResultsTextEdit.setText(str(d))
+
+    def sync_data(self):
+        self.get_vc_data()
+        self.parse_vc_data()
+        self.get_adp_data()
+        self.parse_adp_data()
+
+    def close_app(self):
+        self.close()
 
     def save_settings_button(self):
         """

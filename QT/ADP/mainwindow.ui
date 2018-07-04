@@ -60,26 +60,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="getVCDataButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Get Veracross Data</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="parseVCDataButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Parse Veracross Data</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="1">
         <widget class="QLabel" name="vcParseStatusLabel">
          <property name="text">
@@ -101,30 +81,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="btn_getADPData">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Get ADP Data</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="2">
         <widget class="QLabel" name="adpRecordCount">
          <property name="text">
           <string>0 Employee Records</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="btn_parseADPData">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Parse ADP Data</string>
          </property>
         </widget>
        </item>
@@ -135,7 +95,61 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Get Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Parse Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Get ADP Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Parse ADP Data</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </widget>
+     <widget class="QPushButton" name="btn_sync">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>160</y>
+        <width>371</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sync</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_quit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>210</y>
+        <width>371</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Quit</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="resultsTab">
@@ -431,9 +445,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>240</y>
+        <y>261</y>
         <width>731</width>
-        <height>192</height>
+        <height>171</height>
        </rect>
       </property>
      </widget>
@@ -441,7 +455,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>210</y>
+        <y>240</y>
         <width>60</width>
         <height>16</height>
        </rect>
@@ -455,11 +469,21 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>471</width>
-        <height>71</height>
+        <width>476</width>
+        <height>191</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="getVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Get Veracross Data</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="lbl_vcLastXRateLimitReading">
          <property name="text">
@@ -479,6 +503,64 @@
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="lineEditXRateLimitResetReading"/>
+       </item>
+       <item row="4" column="1">
+        <widget class="QPushButton" name="btn_getADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Get ADP Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="parseVCDataButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Parse Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QPushButton" name="btn_parseADPData">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Parse ADP Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Test Getting Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Test Parsing Veracross Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Test Getting ADP Data</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Test Parsing ADP Data</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -502,8 +584,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>getVCDataButton</tabstop>
-  <tabstop>parseVCDataButton</tabstop>
   <tabstop>btn_saveFieldMap</tabstop>
   <tabstop>txt_fieldMap</tabstop>
   <tabstop>btn_ResultsPrevious</tabstop>
