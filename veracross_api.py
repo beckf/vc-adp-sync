@@ -40,6 +40,9 @@ class Veracross(object):
         self.session = requests.Session()
         self.config = config
 
+    def __repr__(self):
+        return "VC API connected to " + str(self.config["vcurl"]) + " as " + str(self.config["vcuser"])
+
     def set_timers(self, limit_remaining, limit_reset):
         """
         Sets the rate limits
