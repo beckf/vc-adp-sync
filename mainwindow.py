@@ -252,7 +252,7 @@ class Ui_MainWindow(object):
         self.actionQuit.setObjectName("actionQuit")
 
         self.retranslateUi(MainWindow)
-        self.tabs.setCurrentIndex(0)
+        self.tabs.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.btn_saveFieldMap, self.txt_fieldMap)
         MainWindow.setTabOrder(self.txt_fieldMap, self.btn_ResultsPrevious)
@@ -286,7 +286,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Veracross Results"))
         self.label_3.setText(_translate("MainWindow", "ADP Results"))
         self.tabs.setTabText(self.tabs.indexOf(self.resultsTab), _translate("MainWindow", "Results"))
-        self.label.setText(_translate("MainWindow", "Insert field mapping in JSON format.  See README."))
+        self.label.setText(_translate("MainWindow", "Insert field mapping. See README for formatting."))
         self.btn_saveFieldMap.setText(_translate("MainWindow", "Save"))
         self.tabs.setTabText(self.tabs.indexOf(self.fieldMapTab), _translate("MainWindow", "Map Fields"))
         self.settingsSave.setText(_translate("MainWindow", "Save"))

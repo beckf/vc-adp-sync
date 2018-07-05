@@ -119,8 +119,6 @@ class Main(QtWidgets.QMainWindow):
         Parse Veracross Action
         :return:
         """
-        # self.warn_user("Please be patient while the VC data is parsed, this may take a long time.  "
-                       # "Press OK to begin")
 
         # Get field maps from the field maps textBrowser.
         try:
@@ -152,7 +150,7 @@ class Main(QtWidgets.QMainWindow):
 
         if len(d) > 0:
             # Store parsed data in self
-            self.vcParsedData = d
+            self.vc_parsed_data = d
 
             # Notify the interface
             self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
@@ -201,21 +199,35 @@ class Main(QtWidgets.QMainWindow):
             if vcid:
                 for f in field_maps:
                     a.update({f: self.get_nested_dict(i, str(field_maps[f]))})
-                d.update({vcid: a})
+                d.update({int(vcid): a})
 
         if len(d) > 0:
             # Store parsed data in self
-            self.adpParsedData = d
+            self.adp_parsed_data = d
 
             # Notify the interface
             self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.adpResultsTextEdit.setText(str(d))
 
     def sync_data(self):
+
+        if not self.ask_user_continue("This process will take a while to complete. Continue?"):
+            return None
+
         self.get_vc_data()
         self.parse_vc_data()
         self.get_adp_data()
         self.parse_adp_data()
+
+        intersect = []
+        for k in self.adp_parsed_data.keys():
+            if k in self.vc_parsed_data.keys():
+                intersect.append(int(k))
+
+        self.debug_append_log(str(intersect))
+
+        for i in intersect:
+            print(self.vc_parsed_data[i]['first_name'])
 
     def close_app(self):
         self.close()
@@ -261,10 +273,21 @@ class Main(QtWidgets.QMainWindow):
         self.ui.textLog.insertHtml(text + "<br />")
 
     def warn_user(self, text):
-        completeMsg = QtWidgets.QMessageBox()
-        completeMsg.setIcon(QtWidgets.QMessageBox.Information)
-        completeMsg.setText(text)
-        completeMsg.exec_()
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setText(text)
+        msg.exec_()
+
+    def ask_user_continue(self, text):
+        msg = QtWidgets.QMessageBox.question(self,
+                                             'Confirm',
+                                             text,
+                                             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+                                             QtWidgets.QMessageBox.No)
+        if msg == QtWidgets.QMessageBox.Yes:
+            return True
+        else:
+            return False
 
     def select_cert_file(self):
         file = QtWidgets.QFileDialog.getOpenFileName(None,

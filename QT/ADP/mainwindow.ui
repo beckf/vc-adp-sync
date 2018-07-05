@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="syncTab">
      <attribute name="title">
@@ -246,7 +246,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Insert field mapping in JSON format.  See README.</string>
+          <string>Insert field mapping. See README for formatting.</string>
          </property>
         </widget>
        </item>
