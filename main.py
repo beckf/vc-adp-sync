@@ -5,8 +5,26 @@ import images
 import veracross_api as v
 import adp_api as adp
 import config
+import time
 import json
 import ast
+
+
+class Worker(QtCore.QRunnable):
+    """
+    Thread worker
+    """
+
+    def __init__(self, fn, *args, **kwargs):
+        super(Worker, self).__init__()
+        # Store constructor arguments (re-used for processing)
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        self.fn(*self.args, **self.kwargs)
+
 
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
@@ -15,15 +33,36 @@ class Main(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.threadpool = QtCore.QThreadPool()
+        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
+
         # Ensure Sync Tab is active
         self.ui.tabs.setCurrentIndex(0)
 
+        # Progress Bar Style
+        progress_style = """
+                QProgressBar {
+                    border: 1px solid grey;
+                    border-radius: 3px;
+                    text-align: center;
+                }
+
+                QProgressBar::chunk {
+                    background-color: lightgreen;
+                    width: 5px;
+                }"""
+        self.ui.progressBarGetADPData.setStyleSheet(progress_style)
+        self.ui.progressBarGetVCData.setStyleSheet(progress_style)
+        self.ui.progressBarParseADPData.setStyleSheet(progress_style)
+        self.ui.progressBarParseVCData.setStyleSheet(progress_style)
+
+        self.ui.progressBarParseVCData.setValue(0)
+        self.ui.progressBarParseADPData.setValue(0)
+        self.ui.progressBarGetVCData.setValue(0)
+        self.ui.progressBarGetADPData.setValue(0)
+
         # Set Images
         self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
-        self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
-        self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
-        self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
-        self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/red_status.png"))
 
         # Gather Config
         self.c = config.load_settings("config")
@@ -60,10 +99,10 @@ class Main(QtWidgets.QMainWindow):
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
         # Debug Tab Buttons
-        self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
-        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data)
-        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
-        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
+        self.ui.getVCDataButton.clicked.connect(self.get_vc_data_worker)
+        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data_worker)
+        self.ui.btn_getADPData.clicked.connect(self.get_adp_data_worker)
+        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data_worker)
 
         # Enable Buttons
         self.ui.getVCDataButton.setEnabled(True)
@@ -93,33 +132,50 @@ class Main(QtWidgets.QMainWindow):
             if field in v:
                 return k
 
+    def get_vc_data_worker(self):
+        """
+        Threaded trigger for the get_vc_data method below.
+        :return:
+        """
+        worker = Worker(self.get_vc_data)
+        self.threadpool.start(worker)
+
     def get_vc_data(self):
         """
         Get VC Data
         :return:
         """
         try:
-            self.vcfsdata = []
             self.vc = v.Veracross(self.c)
             self.vcfsdata = self.vc.pull("facstaff")
 
             if len(self.vcfsdata) > 0:
-                self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)) + " Faculty Staff Records")
-                self.ui.vcDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+                self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)))
                 self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
                 self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
                 self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
+                # Progress Bar
+                # Sleep to fix bug in QT Painter
+                time.sleep(1)
+                self.ui.progressBarGetVCData.setValue(100)
                 # Enable next step
                 self.ui.parseVCDataButton.setEnabled(True)
         except:
             self.debug_append_log("Cannot get faculty staff from VC")
+
+    def parse_vc_data_worker(self):
+        """
+        Threaded trigger for the get_vc_data method below.
+        :return:
+        """
+        worker = Worker(self.parse_vc_data)
+        self.threadpool.start(worker)
 
     def parse_vc_data(self):
         """
         Parse Veracross Action
         :return:
         """
-
         # Get field maps from the field maps textBrowser.
         try:
             field_maps = ast.literal_eval(config.load_settings("fields"))
@@ -128,6 +184,8 @@ class Main(QtWidgets.QMainWindow):
             return None
 
         d = {}
+        increment = 100 / len(self.vcfsdata)
+        progress = increment
         for i in self.vcfsdata:
             h = v.Veracross(self.c)
 
@@ -146,34 +204,55 @@ class Main(QtWidgets.QMainWindow):
                         a.update({fh: str(hh["household"][fh])})
 
             d.update({int(i["person_pk"]): a})
+            progress = progress + increment
+
+            # Update UI with rate limits
+            self.ui.lineEditXRateLimitReading.setText(str(h.rate_limit_remaining))
+            self.ui.lineEditXRateLimitResetReading.setText(str(h.rate_limit_reset))
+            self.ui.progressBarParseVCData.setValue(int(progress))
             del hh, h
 
         if len(d) > 0:
             # Store parsed data in self
             self.vc_parsed_data = d
 
-            # Notify the interface
-            self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
-            self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
             self.debug_append_log("Veracross data parse complete.")
-            self.ui.vcParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.vcResultsTextEdit.setText(str(d))
 
             # Enable next step
             self.ui.btn_getADPData.setEnabled(True)
+
+    def get_adp_data_worker(self):
+        """
+        Threaded trigger for the get_vc_data method below.
+        :return:
+        """
+        worker = Worker(self.get_adp_data)
+        self.threadpool.start(worker)
 
     def get_adp_data(self):
         try:
             a = adp.Adp(self.c)
             self.adpfsdata = a.workers()
             if len(self.adpfsdata) > 0:
-                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)) + " Employee Records")
-                self.ui.adpDataFSStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
+                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)))
                 self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
+                # Progress Bar
+                # Sleep for Qt Bug
+                time.sleep(1)
+                self.ui.progressBarGetADPData.setValue(100)
                 # Enable next step
                 self.ui.btn_parseADPData.setEnabled(True)
         except:
             return None
+
+    def parse_adp_data_worker(self):
+        """
+        Threaded trigger for the get_vc_data method below.
+        :return:
+        """
+        worker = Worker(self.parse_adp_data)
+        self.threadpool.start(worker)
 
     def parse_adp_data(self):
         d = {}
@@ -187,7 +266,8 @@ class Main(QtWidgets.QMainWindow):
         except:
             self.warn_user("Invalid Field Maps! Check README for more information.")
             return None
-
+        increment = 100 / len(self.adpfsdata)
+        progress = increment
         for i in self.adpfsdata:
             a = {}
             # Get VC ID from field set in settings
@@ -201,13 +281,17 @@ class Main(QtWidgets.QMainWindow):
                     a.update({f: self.get_nested_dict(i, str(field_maps[f]))})
                 d.update({int(vcid): a})
 
+            # Update progress bar
+            progress = progress + increment
+            self.ui.progressBarParseADPData.setValue(int(progress))
+
         if len(d) > 0:
             # Store parsed data in self
             self.adp_parsed_data = d
 
             # Notify the interface
-            self.ui.adpParseStatusLabel.setPixmap(QtGui.QPixmap(":/images/green_status.png"))
             self.ui.adpResultsTextEdit.setText(str(d))
+            self.debug_append_log("ADP data parse complete.")
 
     def sync_data(self):
 

@@ -1,2 +1,2 @@
-* Encrypt settings file using pyAesCrypt
-* Create dict that matches VC data using new Dict Class
+* Threading on methods
+* Progress Bar - See VC Parse
