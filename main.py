@@ -33,7 +33,6 @@ class Worker(QRunnable):
 class WorkerSignals(QObject):
     """
     Defines the signals available from a running worker thread.
-
     Supported signals are:
 
     finished
@@ -44,7 +43,6 @@ class WorkerSignals(QObject):
 
     result
         `object` data returned from processing, anything
-
     """
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
@@ -124,10 +122,10 @@ class Main(QMainWindow):
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
         # Debug Tab Buttons
-        self.ui.getVCDataButton.clicked.connect(self.get_vc_data_worker)
-        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data_worker)
-        self.ui.btn_getADPData.clicked.connect(self.get_adp_data_worker)
-        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data_worker)
+        self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
+        self.ui.parseVCDataButton.clicked.connect(self.parse_vc)
+        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
+        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
 
         # Enable Buttons
         self.ui.getVCDataButton.setEnabled(True)

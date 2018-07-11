@@ -16,7 +16,7 @@ if sys.platform == "darwin":
         d.sync()
         d.close()
 
-elif sys.platform == "win32":
+elif "win" in sys.platform:
     # Windows
     config_file = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
     if not os.path.isfile(config_file + ".dat"):
