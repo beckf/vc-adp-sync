@@ -11,13 +11,14 @@ elif sys.platform == "win32":
     config_file = os.environ['LOCALAPPDATA'] + "/vc-adp-sync"
 
 else:
-    config_file = "/vc-adp-sync"
+    config_file = "vc-adp-sync"
 
 if not os.path.isfile(config_file + ".db"):
-    default = {}
+    default = dict()
     d = shelve.open(config_file, flag='c', writeback=True)
     d["config"] = default
-    d["fields"] = default
+    d["fields"] = "{'first_name': 'person/legalName/givenName', \n" \
+                  "'last_name': 'person/legalName/familyName1', \n}"
     d.sync()
     d.close()
 
