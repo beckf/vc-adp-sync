@@ -1,5 +1,8 @@
 import sys
-from PyQt5 import QtWidgets, QtGui, QtCore
+#from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from mainwindow import Ui_MainWindow
 import images
 import veracross_api as v
@@ -8,9 +11,10 @@ import config
 import time
 import json
 import ast
+import traceback
 
 
-class Worker(QtCore.QRunnable):
+class Worker(QRunnable):
     """
     Thread worker
     """
@@ -26,14 +30,35 @@ class Worker(QtCore.QRunnable):
         self.fn(*self.args, **self.kwargs)
 
 
-class Main(QtWidgets.QMainWindow):
+class WorkerSignals(QObject):
+    """
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        `tuple` (exctype, value, traceback.format_exc() )
+
+    result
+        `object` data returned from processing, anything
+
+    """
+    finished = pyqtSignal()
+    error = pyqtSignal(tuple)
+    result = pyqtSignal(object)
+
+
+class Main(QMainWindow):
     def __init__(self):
 
-        QtWidgets.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.threadpool = QtCore.QThreadPool()
+        self.threadpool = QThreadPool()
         print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
 
         # Ensure Sync Tab is active
@@ -62,7 +87,7 @@ class Main(QtWidgets.QMainWindow):
         self.ui.progressBarGetADPData.setValue(0)
 
         # Set Images
-        self.ui.logo_label.setPixmap(QtGui.QPixmap(":/images/adp-vc-logo-100.png"))
+        self.ui.logo_label.setPixmap(QPixmap(":/images/adp-vc-logo-100.png"))
 
         # Gather Config
         self.c = config.load_settings("config")
@@ -352,32 +377,32 @@ class Main(QtWidgets.QMainWindow):
         :param text:
         :return:
         """
-        self.ui.textLog.moveCursor(QtGui.QTextCursor.End)
+        self.ui.textLog.moveCursor(QTextCursor.End)
         self.ui.textLog.ensureCursorVisible()
         self.ui.textLog.insertHtml(text + "<br />")
 
     def warn_user(self, text):
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
         msg.setText(text)
         msg.exec_()
 
     def ask_user_continue(self, text):
-        msg = QtWidgets.QMessageBox.question(self,
+        msg = QMessageBox.question(self,
                                              'Confirm',
                                              text,
-                                             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                                             QtWidgets.QMessageBox.No)
-        if msg == QtWidgets.QMessageBox.Yes:
+                                             QMessageBox.Yes | QMessageBox.No,
+                                             QMessageBox.No)
+        if msg == QMessageBox.Yes:
             return True
         else:
             return False
 
     def select_cert_file(self):
-        file = QtWidgets.QFileDialog.getOpenFileName(None,
-                                                     "Select ADP API Certificate (Base64 PEM)",
-                                                     "",
-                                                     "Certificate (*.pem)")
+        file = QFileDialog.getOpenFileName(None,
+                                           "Select ADP API Certificate (Base64 PEM)",
+                                           "",
+                                           "Certificate (*.pem)")
         self.ui.lineEdit_adpCertificatePEMPath.setText(file[0])
 
     def select_key_file(self):
@@ -385,7 +410,7 @@ class Main(QtWidgets.QMainWindow):
         Selects a file
         :return:
         """
-        file = QtWidgets.QFileDialog.getOpenFileName(None,
+        file = QFileDialog.getOpenFileName(None,
                                                      "Select ADP API Certificate Key",
                                                      "",
                                                      "Certificate (*.key)")
@@ -393,7 +418,7 @@ class Main(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = Main()
     window.show()
     sys.exit(app.exec_())
