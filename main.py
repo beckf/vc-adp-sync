@@ -1,5 +1,4 @@
 import sys
-#from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,45 +7,42 @@ import images
 import veracross_api as v
 import adp_api as adp
 import config
-import time
-import json
 import ast
 import traceback
 
 
 class Worker(QRunnable):
-    """
-    Thread worker
-    """
 
     def __init__(self, fn, *args, **kwargs):
         super(Worker, self).__init__()
+
         # Store constructor arguments (re-used for processing)
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
+        self.signals = WorkerSignals()
 
+    @pyqtSlot()
     def run(self):
-        self.fn(*self.args, **self.kwargs)
+
+        # Retrieve args/kwargs here; and fire processing using them
+        try:
+            result = self.fn(*self.args, **self.kwargs)
+        except:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:2]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        else:
+            self.signals.result.emit(result)  # Return the result of the processing
+        finally:
+            self.signals.finished.emit()  # Done
 
 
 class WorkerSignals(QObject):
-    """
-    Defines the signals available from a running worker thread.
-    Supported signals are:
-
-    finished
-        No data
-
-    error
-        `tuple` (exctype, value, traceback.format_exc() )
-
-    result
-        `object` data returned from processing, anything
-    """
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
     result = pyqtSignal(object)
+    progress = pyqtSignal(int)
 
 
 class Main(QMainWindow):
@@ -122,10 +118,10 @@ class Main(QMainWindow):
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
         # Debug Tab Buttons
-        self.ui.getVCDataButton.clicked.connect(self.get_vc_data)
-        self.ui.parseVCDataButton.clicked.connect(self.parse_vc)
-        self.ui.btn_getADPData.clicked.connect(self.get_adp_data)
-        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data)
+        self.ui.getVCDataButton.clicked.connect(self.get_vc_data_worker)
+        self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data_worker)
+        self.ui.btn_getADPData.clicked.connect(self.get_adp_data_worker)
+        self.ui.btn_parseADPData.clicked.connect(self.parse_adp_data_worker)
 
         # Enable Buttons
         self.ui.getVCDataButton.setEnabled(True)
@@ -161,7 +157,18 @@ class Main(QMainWindow):
         :return:
         """
         worker = Worker(self.get_vc_data)
+        worker.signals.finished.connect(self.get_vc_data_complete)
         self.threadpool.start(worker)
+
+    def get_vc_data_complete(self):
+        if len(self.vcfsdata) > 0:
+            self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)))
+            self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
+            self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
+            self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
+            self.ui.progressBarGetVCData.setValue(100)
+            # Enable next step
+            self.ui.parseVCDataButton.setEnabled(True)
 
     def get_vc_data(self):
         """
@@ -171,18 +178,6 @@ class Main(QMainWindow):
         try:
             self.vc = v.Veracross(self.c)
             self.vcfsdata = self.vc.pull("facstaff")
-
-            if len(self.vcfsdata) > 0:
-                self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)))
-                self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
-                self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
-                self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
-                # Progress Bar
-                # Sleep to fix bug in QT Painter
-                time.sleep(1)
-                self.ui.progressBarGetVCData.setValue(100)
-                # Enable next step
-                self.ui.parseVCDataButton.setEnabled(True)
         except:
             self.debug_append_log("Cannot get faculty staff from VC")
 
@@ -192,7 +187,20 @@ class Main(QMainWindow):
         :return:
         """
         worker = Worker(self.parse_vc_data)
+        worker.signals.finished.connect(self.parse_vc_data_complete)
         self.threadpool.start(worker)
+
+    def parse_vc_data_complete(self):
+        try:
+            if len(self.vc_parsed_data) > 0:
+                # Send results to textedit
+                self.ui.vcResultsTextEdit.setText(str(self.vc_parsed_data))
+                # Enable next step
+                self.ui.btn_getADPData.setEnabled(True)
+
+                self.debug_append_log("Veracross data parsed.")
+        except:
+            print("error")
 
     def parse_vc_data(self):
         """
@@ -239,33 +247,28 @@ class Main(QMainWindow):
             # Store parsed data in self
             self.vc_parsed_data = d
 
-            self.debug_append_log("Veracross data parse complete.")
-            self.ui.vcResultsTextEdit.setText(str(d))
-
-            # Enable next step
-            self.ui.btn_getADPData.setEnabled(True)
-
     def get_adp_data_worker(self):
         """
         Threaded trigger for the get_vc_data method below.
         :return:
         """
         worker = Worker(self.get_adp_data)
+        worker.signals.finished.connect(self.get_adp_data_complete)
         self.threadpool.start(worker)
+
+    def get_adp_data_complete(self):
+        if len(self.adpfsdata) > 0:
+            self.ui.adpRecordCount.setText(str(len(self.adpfsdata)))
+            self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
+            # Progress Bar
+            self.ui.progressBarGetADPData.setValue(100)
+            # Enable next step
+            self.ui.btn_parseADPData.setEnabled(True)
 
     def get_adp_data(self):
         try:
             a = adp.Adp(self.c)
             self.adpfsdata = a.workers()
-            if len(self.adpfsdata) > 0:
-                self.ui.adpRecordCount.setText(str(len(self.adpfsdata)))
-                self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
-                # Progress Bar
-                # Sleep for Qt Bug
-                time.sleep(1)
-                self.ui.progressBarGetADPData.setValue(100)
-                # Enable next step
-                self.ui.btn_parseADPData.setEnabled(True)
         except:
             return None
 
@@ -275,7 +278,17 @@ class Main(QMainWindow):
         :return:
         """
         worker = Worker(self.parse_adp_data)
+        worker.signals.finished.connect(self.parse_adp_data_complete)
         self.threadpool.start(worker)
+
+    def parse_adp_data_complete(self):
+        try:
+            if len(self.adp_parsed_data) > 0:
+                # Notify the interface
+                self.ui.adpResultsTextEdit.setText(str(self.adp_parsed_data))
+                self.debug_append_log("ADP data parse complete.")
+        except:
+            self.debug_append_log("Error parsing ADP Data.")
 
     def parse_adp_data(self):
         d = {}
@@ -311,10 +324,6 @@ class Main(QMainWindow):
         if len(d) > 0:
             # Store parsed data in self
             self.adp_parsed_data = d
-
-            # Notify the interface
-            self.ui.adpResultsTextEdit.setText(str(d))
-            self.debug_append_log("ADP data parse complete.")
 
     def sync_data(self):
 
@@ -387,10 +396,10 @@ class Main(QMainWindow):
 
     def ask_user_continue(self, text):
         msg = QMessageBox.question(self,
-                                             'Confirm',
-                                             text,
-                                             QMessageBox.Yes | QMessageBox.No,
-                                             QMessageBox.No)
+                                   "Confirm",
+                                    text,
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.No)
         if msg == QMessageBox.Yes:
             return True
         else:
@@ -409,9 +418,9 @@ class Main(QMainWindow):
         :return:
         """
         file = QFileDialog.getOpenFileName(None,
-                                                     "Select ADP API Certificate Key",
-                                                     "",
-                                                     "Certificate (*.key)")
+                                           "Select ADP API Certificate Key",
+                                            "",
+                                            "Certificate (*.key)")
         self.ui.lineEdit_adpCertificateKeyPath.setText(file[0])
 
 
