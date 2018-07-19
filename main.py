@@ -53,7 +53,14 @@ class Main(QMainWindow):
         self.ui.setupUi(self)
 
         self.threadpool = QThreadPool()
-        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
+        self.debug_append_log("Multithreading with maximum %d threads." % self.threadpool.maxThreadCount())
+
+        # Setup vars
+        self.vcfsdata = None
+        self.vc_parsed_data = None
+        self.adpfsdata = None
+        self.adp_parsed_data = None
+        self.last_sync_step = None
 
         # Ensure Sync Tab is active
         self.ui.tabs.setCurrentIndex(0)
@@ -165,10 +172,15 @@ class Main(QMainWindow):
             self.ui.vcFSRecordCount.setText(str(len(self.vcfsdata)))
             self.ui.lineEditXRateLimitReading.setText(str(self.vc.rate_limit_remaining))
             self.ui.lineEditXRateLimitResetReading.setText(str(self.vc.rate_limit_reset))
-            self.debug_append_log("Found " + str(len(self.vcfsdata)) + " faculty staff records in VC.")
+            self.debug_append_log("Found %d faculty staff records in Veracross." % len(self.vcfsdata))
             self.ui.progressBarGetVCData.setValue(100)
-            # Enable next step
-            self.ui.parseVCDataButton.setEnabled(True)
+
+            if self.last_sync_step is "begin":
+                self.last_sync_step = "get_vc_data"
+                self.parse_vc_data_worker()
+            else:
+                # Enable next step
+                self.ui.parseVCDataButton.setEnabled(True)
 
     def get_vc_data(self):
         """
@@ -179,7 +191,10 @@ class Main(QMainWindow):
             self.vc = v.Veracross(self.c)
             self.vcfsdata = self.vc.pull("facstaff")
         except:
-            self.debug_append_log("Cannot get faculty staff from VC")
+            self.debug_append_log("Cannot get faculty staff from Veracross")
+            e = sys.exc_info()[0]
+            self.debug_append_log(e)
+            return None
 
     def parse_vc_data_worker(self):
         """
@@ -195,12 +210,15 @@ class Main(QMainWindow):
             if len(self.vc_parsed_data) > 0:
                 # Send results to textedit
                 self.ui.vcResultsTextEdit.setText(str(self.vc_parsed_data))
-                # Enable next step
-                self.ui.btn_getADPData.setEnabled(True)
-
                 self.debug_append_log("Veracross data parsed.")
+                if self.last_sync_step is "get_vc_data":
+                    self.last_sync_step = "parse_vc_data"
+                    self.get_adp_data_worker()
+                else:
+                    # Enable next step
+                    self.ui.btn_getADPData.setEnabled(True)
         except:
-            print("error")
+            print("Error parsing Veracross data.")
 
     def parse_vc_data(self):
         """
@@ -212,36 +230,44 @@ class Main(QMainWindow):
             field_maps = ast.literal_eval(config.load_settings("fields"))
         except:
             self.warn_user("Invalid Field Maps! Check README for more information.")
+            e = sys.exc_info()[0]
+            self.debug_append_log(e)
             return None
 
-        d = {}
-        increment = 100 / len(self.vcfsdata)
-        progress = increment
-        for i in self.vcfsdata:
-            h = v.Veracross(self.c)
+        try:
+            d = {}
+            increment = 100 / len(self.vcfsdata)
+            progress = increment
+            for i in self.vcfsdata:
+                h = v.Veracross(self.c)
 
-            if i["household_fk"] > 0:
-                hh = h.pull("households/" + str(i["household_fk"]))
-            else:
-                hh = None
+                if i["household_fk"] > 0:
+                    hh = h.pull("households/" + str(i["household_fk"]))
+                else:
+                    hh = None
 
-            a = {}
-            for f in i:
-                if field_maps.get(f):
-                    a.update({f: str(i[f])})
-            if hh:
-                for fh in hh["household"]:
-                    if field_maps.get(fh):
-                        a.update({fh: str(hh["household"][fh])})
+                a = {}
+                for f in i:
+                    if field_maps.get(f):
+                        a.update({f: str(i[f])})
+                if hh:
+                    for fh in hh["household"]:
+                        if field_maps.get(fh):
+                            a.update({fh: str(hh["household"][fh])})
 
-            d.update({int(i["person_pk"]): a})
-            progress = progress + increment
+                d.update({int(i["person_pk"]): a})
+                progress = progress + increment
 
-            # Update UI with rate limits
-            self.ui.lineEditXRateLimitReading.setText(str(h.rate_limit_remaining))
-            self.ui.lineEditXRateLimitResetReading.setText(str(h.rate_limit_reset))
-            self.ui.progressBarParseVCData.setValue(int(progress))
-            del hh, h
+                # Update UI with rate limits
+                self.ui.lineEditXRateLimitReading.setText(str(h.rate_limit_remaining))
+                self.ui.lineEditXRateLimitResetReading.setText(str(h.rate_limit_reset))
+                self.ui.progressBarParseVCData.setValue(int(progress))
+                del hh, h
+        except:
+            self.debug_append_log("Unable to parse Veracross data.")
+            e = sys.exc_info()[0]
+            self.debug_append_log(e)
+            return None
 
         if len(d) > 0:
             # Store parsed data in self
@@ -259,17 +285,27 @@ class Main(QMainWindow):
     def get_adp_data_complete(self):
         if len(self.adpfsdata) > 0:
             self.ui.adpRecordCount.setText(str(len(self.adpfsdata)))
-            self.debug_append_log("Found " + str(len(self.adpfsdata)) + " employee records in ADP.")
+            self.debug_append_log("Found %d employee records in ADP." % len(self.adpfsdata))
             # Progress Bar
             self.ui.progressBarGetADPData.setValue(100)
-            # Enable next step
-            self.ui.btn_parseADPData.setEnabled(True)
+
+            if self.last_sync_step is "parse_vc_data":
+                self.last_sync_step = "get_adp_data"
+                self.parse_adp_data_worker()
+            else:
+                # Enable next step
+                self.ui.btn_parseADPData.setEnabled(True)
 
     def get_adp_data(self):
         try:
+            # Since we cannot get progress.  Set Progress to 50 so user is aware.
+            self.ui.progressBarGetADPData.setValue(int(50))
             a = adp.Adp(self.c)
             self.adpfsdata = a.workers()
         except:
+            self.debug_append_log("Unable to get ADP data.")
+            e = sys.exc_info()[0]
+            self.debug_append_log(e)
             return None
 
     def parse_adp_data_worker(self):
@@ -287,6 +323,9 @@ class Main(QMainWindow):
                 # Notify the interface
                 self.ui.adpResultsTextEdit.setText(str(self.adp_parsed_data))
                 self.debug_append_log("ADP data parse complete.")
+                if self.last_sync_step is "get_adp_data":
+                    self.last_sync_step = "complete"
+                    self.sync_data_ready()
         except:
             self.debug_append_log("Error parsing ADP Data.")
 
@@ -330,20 +369,31 @@ class Main(QMainWindow):
         if not self.ask_user_continue("This process will take a while to complete. Continue?"):
             return None
 
-        self.get_vc_data()
-        self.parse_vc_data()
-        self.get_adp_data()
-        self.parse_adp_data()
+        self.last_sync_step = "begin"
+        self.get_vc_data_worker()
 
+    def sync_data_ready(self):
         intersect = []
         for k in self.adp_parsed_data.keys():
             if k in self.vc_parsed_data.keys():
                 intersect.append(int(k))
 
-        self.debug_append_log(str(intersect))
-
         for i in intersect:
-            print(self.vc_parsed_data[i]['first_name'])
+            vc_set = set(self.vc_parsed_data[i].items())
+            adp_set = set(self.adp_parsed_data[i].items())
+
+            data_diff = vc_set - adp_set
+
+            # Append to UI
+            for s in data_diff:
+                self.ui.txt_SyncDataResults.moveCursor(QTextCursor.End)
+                self.ui.txt_SyncDataResults.insertPlainText(str(self.vc_parsed_data[i]['first_name']) +
+                                                            " " +
+                                                            str(self.vc_parsed_data[i]['last_name']) +
+                                                            ": " +
+                                                            str(s) +
+                                                            "\n"
+                                                            )
 
     def close_app(self):
         self.close()
@@ -399,7 +449,7 @@ class Main(QMainWindow):
                                    "Confirm",
                                     text,
                                     QMessageBox.Yes | QMessageBox.No,
-                                    QMessageBox.No)
+                                    QMessageBox.Yes)
         if msg == QMessageBox.Yes:
             return True
         else:
