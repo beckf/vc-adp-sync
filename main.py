@@ -124,6 +124,8 @@ class Main(QMainWindow):
         self.ui.settingsSave.clicked.connect(self.save_settings_button)
         self.ui.btn_pickerADPCertificate.clicked.connect(self.select_cert_file)
         self.ui.btn_pickerADPCertificateKey.clicked.connect(self.select_key_file)
+        self.ui.btn_showADPPass.clicked.connect(self.ui_show_adp_password)
+        self.ui.btn_showADPUser.clicked.connect(self.ui_show_adp_user)
         # Debug Tab Buttons
         self.ui.getVCDataButton.clicked.connect(self.get_vc_data_worker)
         self.ui.parseVCDataButton.clicked.connect(self.parse_vc_data_worker)
@@ -333,6 +335,7 @@ class Main(QMainWindow):
         d = {}
 
         if not self.c["adpvccustomfieldname"]:
+            self.warn_user("ADP VC Custom Field not set in Settings")
             return None
 
         # Get field maps from the field maps textBrowser.
@@ -341,6 +344,7 @@ class Main(QMainWindow):
         except:
             self.warn_user("Invalid Field Maps! Check README for more information.")
             return None
+
         increment = 100 / len(self.adpfsdata)
         progress = increment
         for i in self.adpfsdata:
@@ -369,6 +373,7 @@ class Main(QMainWindow):
         if not self.ask_user_continue("This process will take a while to complete. Continue?"):
             return None
 
+        # Use the last_sync_step to track progress through workers
         self.last_sync_step = "begin"
         self.get_vc_data_worker()
 
@@ -472,6 +477,12 @@ class Main(QMainWindow):
                                             "",
                                             "Certificate (*.key)")
         self.ui.lineEdit_adpCertificateKeyPath.setText(file[0])
+
+    def ui_show_adp_password(self):
+        self.ui.lineEdit_adpPassword.setEchoMode(QLineEdit.Normal)
+
+    def ui_show_adp_user(self):
+        self.ui.lineEdit_adpUsername.setEchoMode(QLineEdit.Normal)
 
 
 if __name__ == '__main__':

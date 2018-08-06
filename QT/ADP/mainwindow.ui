@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="syncTab">
      <attribute name="title">
@@ -355,10 +355,17 @@
         <x>10</x>
         <y>20</y>
         <width>731</width>
-        <height>339</height>
+        <height>365</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="4" column="2">
+        <widget class="QPushButton" name="btn_showADPPass">
+         <property name="text">
+          <string>Show</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="lineEdit_adpPassword">
          <property name="echoMode">
@@ -493,6 +500,13 @@
         <widget class="QPushButton" name="btn_pickerADPCertificateKey">
          <property name="text">
           <string>Select Certificate Key</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="btn_showADPUser">
+         <property name="text">
+          <string>Show</string>
          </property>
         </widget>
        </item>

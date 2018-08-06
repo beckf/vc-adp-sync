@@ -6,6 +6,9 @@ and PyQT. The goal is to sync demographic information stored in Veracross
 with ADP Payroll. Employees are matched by their Veracross PersonPK stored
 in both systems.
 
+Use at your OWN RISK.  You are responsible for reviewing code and testing 
+this against your own systems.  See LICENSE.
+
 PyQT was selected for it's portability between both MacOS and Windows.
 
 ## Quick start to development
