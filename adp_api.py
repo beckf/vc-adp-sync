@@ -40,6 +40,7 @@ class Adp(object):
         self.config = config
         # Create a new session for API calls. This will bearer token.
         self.session = requests.Session()
+        self.session.cert = (self.config['adpcertpath'], self.config['adpcertkeypath'])
 
     def get_token(self):
         if datetime.datetime.now() > self.token_expire_time:
